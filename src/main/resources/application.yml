@@ -1,0 +1,9 @@
+movie-theatre:
+  trace-id:
+    header: Trace-Id
+  user-id:
+    jwt-claim: empId
+
+logging:
+  pattern:
+    console: "%d{\"yyyy-MM-dd'T'HH:mm:ss:SSSXXX\" GMT+6} %-5level [%X{requestId}]: %msg%n"
