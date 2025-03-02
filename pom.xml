@@ -35,12 +35,16 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.exclusions>
             **/model/**/*,
-            **/dto/**/*
+            **/dto/**/*,
+            **/MovieTheatreApplication.*
         </sonar.exclusions>
 
         <!-- Styling -->
         <spotless.version>2.41.1</spotless.version>
         <google-java-format.version>1.20.0</google-java-format.version>
+
+        <!-- Modules -->
+        <log-utils.version>0.2.2</log-utils.version>
 
         <!-- Testing -->
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
@@ -81,6 +85,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Shared Modules -->
+        <dependency>
+            <groupId>net.ow.shared</groupId>
+            <artifactId>log-utils</artifactId>
+            <version>${log-utils.version}</version>
         </dependency>
 
         <!-- Lombok -->
@@ -169,6 +180,7 @@
                         <excludes>
                             <exclude>**/dto/**/*</exclude>
                             <exclude>**/model/**/*</exclude>
+                            <exclude>**/MovieTheatreApplication.*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
