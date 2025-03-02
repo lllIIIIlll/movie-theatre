@@ -1,6 +1,8 @@
 movie-theatre:
   trace-id:
     header: Trace-Id
+  user-id:
+    jwt-claim: empId
 
 logging:
   pattern:
