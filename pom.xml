@@ -45,12 +45,11 @@
         <google-java-format.version>1.20.0</google-java-format.version>
 
         <!-- Modules -->
-        <log-utils.version>0.2.2</log-utils.version>
+        <log-utils.version>0.2.3</log-utils.version>
 
         <!-- Documentation -->
         <swagger-parser.version>2.1.22</swagger-parser.version>
         <springdoc-openai.version>2.5.0</springdoc-openai.version>
-
 
         <!-- Testing -->
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
