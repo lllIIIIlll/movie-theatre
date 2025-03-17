@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Movie Theatre Service
+  version: 1.0.0
+  description: |
+    This microservice is designed to retrieve movie information from TMDB (The Movie Database) and download related resources from the internet. It provides a comprehensive API for querying, filtering, and managing movie data, supporting efficient content retrieval and resource acquisition.
+
+paths:
+  /search:
+    get:
+      summary: Search for movies, TV shows, and people
+      description: |
+        Searches for movies, TV shows, and people based on the provided query string.
+        Results are paginated and can be filtered by language.
+      operationId: search
+      parameters:
+        - name: query
+          in: query
+          description: The search query string
+          required: true
+          schema:
+            type: string
+        - name: pageNumber
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    PaginatedResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      
