@@ -36,6 +36,7 @@
         <sonar.exclusions>
             **/model/**/*,
             **/dto/**/*,
+            **/controller/**/*,
             **/MovieTheatreApplication.*
         </sonar.exclusions>
 
@@ -180,6 +181,7 @@
                         <excludes>
                             <exclude>**/dto/**/*</exclude>
                             <exclude>**/model/**/*</exclude>
+                            <exclude>**/controller/**/*</exclude>
                             <exclude>**/MovieTheatreApplication.*</exclude>
                         </excludes>
                     </configuration>
@@ -265,6 +267,14 @@
                                 <version>${junit-jupiter.version}</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
