@@ -4,10 +4,12 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -20,7 +22,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private static String API_DOCUMENTATION_PATH = "api-doc/movie-theatre-service.yaml";
 
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI customOpenAPI() throws FileNotFoundException {
         ClassLoader classLoader = getClass().getClassLoader();
 
         InputStream inputStream = classLoader.getResourceAsStream(API_DOCUMENTATION_PATH);
@@ -28,7 +30,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
             log.error(
                     "Failed to load OpenAPI definition from classpath - {}",
                     API_DOCUMENTATION_PATH);
-            throw new RuntimeException(
+            throw new FileNotFoundException(
                     "Failed to load OpenAPI definition from classpath - " + API_DOCUMENTATION_PATH);
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -40,7 +42,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
         }
 
         log.error("Failed to parse OpenAPI definition with error - {}", result.getMessages());
-        throw new RuntimeException("Failed to parse OpenAPI definition: " + result.getMessages());
+        throw new BeanInitializationException(
+                "Failed to parse OpenAPI definition: " + result.getMessages());
     }
 
     @Override

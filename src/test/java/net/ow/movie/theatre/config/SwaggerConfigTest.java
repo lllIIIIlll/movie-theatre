@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import java.io.FileNotFoundException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -35,8 +37,8 @@ class SwaggerConfigTest {
     void customOpenAPITest_whenResourceNotFound_thenThrowsException() {
         ReflectionTestUtils.setField(swaggerConfig, "API_DOCUMENTATION_PATH", "invalid-path");
 
-        RuntimeException exception =
-                assertThrows(RuntimeException.class, () -> swaggerConfig.customOpenAPI());
+        FileNotFoundException exception =
+                assertThrows(FileNotFoundException.class, () -> swaggerConfig.customOpenAPI());
 
         assertNotNull(exception.getMessage());
         assertTrue(
@@ -52,8 +54,9 @@ class SwaggerConfigTest {
                 "API_DOCUMENTATION_PATH",
                 "api-doc/invalid-movie-theatre-service.yaml");
 
-        RuntimeException exception =
-                assertThrows(RuntimeException.class, () -> swaggerConfig.customOpenAPI());
+        BeanInitializationException exception =
+                assertThrows(
+                        BeanInitializationException.class, () -> swaggerConfig.customOpenAPI());
 
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("Failed to parse OpenAPI definition"));
