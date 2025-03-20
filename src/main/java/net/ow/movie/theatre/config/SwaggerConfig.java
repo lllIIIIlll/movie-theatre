@@ -38,7 +38,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         String content = reader.lines().collect(Collectors.joining("\n"));
 
         ParseOptions parseOptions = new ParseOptions();
-        //        parseOptions.setResolve(true);
+        parseOptions.setResolve(true);
         parseOptions.setResolveFully(true);
 
         SwaggerParseResult result = new OpenAPIV3Parser().readContents(content, null, parseOptions);
