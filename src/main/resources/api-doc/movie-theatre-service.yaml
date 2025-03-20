@@ -86,7 +86,8 @@ components:
               type: integer
               description: Movie ID
             mediaType:
-              type: string
+              type: enum
+              enum: [movie]
               description: Type of media (movie)
             name:
               type: string
@@ -111,7 +112,8 @@ components:
               type: integer
               description: TV show ID
             mediaType:
-              type: string
+              type: enum
+              enum: [tv]
               description: Type of media (tv)
             name:
               type: string
@@ -138,7 +140,8 @@ components:
               type: integer
               description: Person ID
             mediaType:
-              type: string
+              type: enum
+              enum: [person]
               description: Type of media (person)
             name:
               type: string
