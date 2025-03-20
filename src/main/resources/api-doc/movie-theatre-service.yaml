@@ -40,7 +40,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedResponse'
+                $ref: '#/components/schemas/PaginatedResponseSearchResultDTO'
         '400':
           description: Bad request - Invalid parameters
         '401':
@@ -52,9 +52,101 @@ paths:
 
 components:
   schemas:
-    PaginatedResponse:
+    PaginatedResponseSearchResultDTO:
       type: object
       properties:
-        id:
-          type: string
+        data:
+          type: array
+          description: List of search results for the current page
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MovieSearchResultDTO'
+              - $ref: '#/components/schemas/TVSearchResultDTO'
+              - $ref: '#/components/schemas/PersonSearchResultDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+    
+    SearchResultDTO:
+      type: object
+      description: Base search result DTO
+
+    MovieSearchResultDTO:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Movie ID
+            mediaType:
+              type: string
+              description: Type of media (movie)
+            name:
+              type: string
+              description: Movie title
+            overview:
+              type: string
+              description: Movie overview/description
+            releaseDate:
+              type: string
+              format: date-time
+              description: Movie release date
+            posterPath:
+              type: string
+              description: Path to movie poster image
+
+    TVSearchResultDTO:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: TV show ID
+            mediaType:
+              type: string
+              description: Type of media (tv)
+            name:
+              type: string
+              description: TV show title
+            overview:
+              type: string
+              description: TV show overview/description
+            releaseDate:
+              type: string
+              format: date-time
+              description: TV show first air date
+            posterPath:
+              type: string
+              description: Path to TV show poster image
+
+    PersonSearchResultDTO:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultDTO'
+        - type: object
+          xml:
+            name: "PersonSearchResult"
+          properties:
+            id:
+              type: integer
+              description: Person ID
+            mediaType:
+              type: string
+              description: Type of media (person)
+            name:
+              type: string
+              description: Person's name
+            overview:
+              type: string
+              description: Person's biography
+            posterPath:
+              type: string
+              description: Path to person's profile image
       

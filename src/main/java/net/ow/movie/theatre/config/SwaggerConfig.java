@@ -2,6 +2,7 @@ package net.ow.movie.theatre.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -36,7 +37,11 @@ public class SwaggerConfig implements WebMvcConfigurer {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String content = reader.lines().collect(Collectors.joining("\n"));
 
-        SwaggerParseResult result = new OpenAPIV3Parser().readContents(content);
+        ParseOptions parseOptions = new ParseOptions();
+        //        parseOptions.setResolve(true);
+        parseOptions.setResolveFully(true);
+
+        SwaggerParseResult result = new OpenAPIV3Parser().readContents(content, null, parseOptions);
         if (result.getMessages().isEmpty() && result.getOpenAPI() != null) {
             return result.getOpenAPI();
         }
