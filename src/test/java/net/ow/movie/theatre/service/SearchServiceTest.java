@@ -1,0 +1,46 @@
+package net.ow.movie.theatre.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
+import net.ow.movie.theatre.dto.search.SearchResultDTO;
+import net.ow.movie.theatre.mapper.search.SearchResultDTOMapper;
+import net.ow.movie.tmdb.feign.TMDBFeignClient;
+import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
+import net.ow.movie.tmdb.model.search.TMDBSearchResult;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class SearchServiceTest {
+    @InjectMocks private SearchService searchService;
+
+    @Mock private TMDBFeignClient tmdbFeignClient;
+
+    @Mock private SearchResultDTOMapper searchResultDTOMapper;
+
+    @Mock private TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse;
+
+    @Mock private PaginatedResponse<SearchResultDTO> paginatedResponse;
+
+    @Test
+    void searchTest_OK() {
+        String query = "query";
+        Integer page = 1;
+        String language = "en-US";
+
+        when(tmdbFeignClient.search(query, true, language, page)).thenReturn(tmdbPaginatedResponse);
+        when(searchResultDTOMapper.from(tmdbPaginatedResponse)).thenReturn(paginatedResponse);
+
+        PaginatedResponse<SearchResultDTO> actualPaginatedResponse =
+                searchService.search(query, page, language);
+
+        assertEquals(actualPaginatedResponse, paginatedResponse);
+        verify(tmdbFeignClient, times(1)).search(query, true, language, page);
+        verify(searchResultDTOMapper, times(1)).from(tmdbPaginatedResponse);
+    }
+}
