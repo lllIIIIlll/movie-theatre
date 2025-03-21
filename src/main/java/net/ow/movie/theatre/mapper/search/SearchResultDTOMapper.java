@@ -23,13 +23,9 @@ import org.mapstruct.*;
             PersonSearchResultDTOMapper.class
         })
 public interface SearchResultDTOMapper {
-    @SubclassMappings({
-        @SubclassMapping(target = MovieSearchResultDTO.class, source = TMDBMovieSearchResult.class),
-        @SubclassMapping(target = TVSearchResultDTO.class, source = TMDBTVSearchResult.class),
-        @SubclassMapping(
-                target = PersonSearchResultDTO.class,
-                source = TMDBPersonSearchResult.class)
-    })
+    @SubclassMapping(target = MovieSearchResultDTO.class, source = TMDBMovieSearchResult.class)
+    @SubclassMapping(target = TVSearchResultDTO.class, source = TMDBTVSearchResult.class)
+    @SubclassMapping(target = PersonSearchResultDTO.class, source = TMDBPersonSearchResult.class)
     SearchResultDTO from(TMDBSearchResult tmdbSearchResult);
 
     @Mapping(target = "data", source = "results")
