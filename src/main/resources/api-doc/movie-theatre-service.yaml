@@ -5,9 +5,17 @@ info:
   description: |
     This microservice is designed to retrieve movie information from TMDB (The Movie Database) and download related resources from the internet. It provides a comprehensive API for querying, filtering, and managing movie data, supporting efficient content retrieval and resource acquisition.
 
+tags:
+  - name: Movies
+    description: Operations related to movie information
+  - name: Search
+    description: Search operations across movies, TV shows, and people
+
 paths:
   /search:
     get:
+      tags:
+        - Search
       summary: Search for movies, TV shows, and people
       description: |
         Searches for movies, TV shows, and people based on the provided query string.
@@ -50,6 +58,29 @@ paths:
         '500':
           description: Internal server error
 
+  /movies/popular:
+    get:
+      tags:
+        - Movies
+      summary: Get popular movies
+      description: Retrieves a paginated list of popular movies
+      operationId: getPopularMovies
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseBaseMovieDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     PaginatedResponseSearchResultDTO:
@@ -63,6 +94,23 @@ components:
               - $ref: '#/components/schemas/MovieSearchResultDTO'
               - $ref: '#/components/schemas/TVSearchResultDTO'
               - $ref: '#/components/schemas/PersonSearchResultDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+
+    PaginatedResponseBaseMovieDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BaseMovieDTO'
         page:
           type: integer
           description: Current page number
@@ -152,4 +200,32 @@ components:
             posterPath:
               type: string
               description: Path to person's profile image
+
+    BaseMovieDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the movie
+        posterPath:
+          type: string
+          description: Path to the movie's poster image
+        name:
+          type: string
+          description: Name/title of the movie
+        genres:
+          type: array
+          description: List of genres associated with the movie
+          items:
+            $ref: '#/components/schemas/GenreDTO'
+
+    GenreDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the genre
+        name:
+          type: string
+          description: Name of the genre
       
