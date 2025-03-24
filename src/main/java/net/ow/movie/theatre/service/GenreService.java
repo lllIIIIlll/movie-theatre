@@ -31,10 +31,6 @@ public class GenreService {
         Map<Integer, GenreDTO> tmdbGenresMap =
                 genres.stream().collect(Collectors.toMap(GenreDTO::getId, genre -> genre));
 
-        return ids.stream()
-                .distinct()
-                .map(tmdbGenresMap::get)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return ids.stream().distinct().map(tmdbGenresMap::get).filter(Objects::nonNull).toList();
     }
 }

@@ -26,8 +26,6 @@ class GenreServiceTest {
 
     @Mock private TMDBGenreList tmdbGenreList;
 
-    @Mock private List<GenreDTO> genres;
-
     @Mock private GenreDTO genre1;
 
     @Mock private GenreDTO genre2;
@@ -35,6 +33,8 @@ class GenreServiceTest {
     @Test
     void getGenresTest_OK() {
         String language = "zh-CN";
+
+        List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
         when(genreDTOMapper.from(tmdbGenreList)).thenReturn(genres);
@@ -68,6 +68,10 @@ class GenreServiceTest {
     @Test
     void getGenresByIdsTest_whenEmptyIdsList_thenReturnsEmptyList() {
         String language = "zh-CN";
+
+        when(genre1.getId()).thenReturn(1);
+        when(genre2.getId()).thenReturn(2);
+        List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
         when(genreDTOMapper.from(tmdbGenreList)).thenReturn(genres);
