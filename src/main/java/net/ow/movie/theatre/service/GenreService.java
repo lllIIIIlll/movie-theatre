@@ -36,8 +36,12 @@ public class GenreService {
                                 (existing, replacement) -> replacement));
     }
 
-    public List<GenreDTO> findGenresByIds(List<Integer> ids, String language) {
-        Map<Integer, GenreDTO> tmdbGenresMap = getAllGenresAsMap(language);
-        return ids.stream().distinct().map(tmdbGenresMap::get).filter(Objects::nonNull).toList();
+    public List<GenreDTO> findGenresByIds(
+            List<Integer> genreIds, Map<Integer, GenreDTO> genreIdToGenreMap) {
+        return genreIds.stream()
+                .distinct()
+                .map(genreIdToGenreMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }
