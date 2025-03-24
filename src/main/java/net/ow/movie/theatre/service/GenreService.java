@@ -18,7 +18,7 @@ public class GenreService {
 
     private final GenreDTOMapper genreDTOMapper;
 
-    public List<GenreDTO> getGenres(String language) {
+    public List<GenreDTO> getAllGenres(String language) {
         log.debug("Fetching genres from TMDB");
         TMDBGenreList tmdbGenreList = tmdbFeignClient.getGenres(language);
         log.debug("Fetched genres from TMDB");
@@ -26,11 +26,18 @@ public class GenreService {
         return genreDTOMapper.from(tmdbGenreList);
     }
 
-    public List<GenreDTO> getGenresByIds(List<Integer> ids, String language) {
-        List<GenreDTO> genres = getGenres(language);
-        Map<Integer, GenreDTO> tmdbGenresMap =
-                genres.stream().collect(Collectors.toMap(GenreDTO::getId, genre -> genre));
+    public Map<Integer, GenreDTO> getAllGenresAsMap(String language) {
+        List<GenreDTO> genres = getAllGenres(language);
+        return genres.stream()
+                .collect(
+                        Collectors.toMap(
+                                GenreDTO::getId,
+                                genre -> genre,
+                                (existing, replacement) -> replacement));
+    }
 
+    public List<GenreDTO> findGenresByIds(List<Integer> ids, String language) {
+        Map<Integer, GenreDTO> tmdbGenresMap = getAllGenresAsMap(language);
         return ids.stream().distinct().map(tmdbGenresMap::get).filter(Objects::nonNull).toList();
     }
 }
