@@ -104,7 +104,7 @@ class GenreServiceTest {
     }
 
     @Test
-    void findGenresByIds_OK() {
+    void findGenresByIdsTest_OK() {
         List<Integer> genreIds = List.of(1, 2);
         List<GenreDTO> expectedGenres = List.of(genre1, genre2);
 
@@ -119,7 +119,7 @@ class GenreServiceTest {
     }
 
     @Test
-    void findGenresByIds_whenSomeGenreIdsInMap_thenReturnsMappedGenres() {
+    void findGenresByIdsTest_whenSomeGenreIdsInMap_thenReturnsMappedGenres() {
         List<Integer> genreIds = List.of(1, 2, 3);
         List<GenreDTO> expectedGenres = List.of(genre1, genre2);
 
