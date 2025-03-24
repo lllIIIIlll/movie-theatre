@@ -65,6 +65,27 @@ paths:
       summary: Get popular movies
       description: Retrieves a paginated list of popular movies
       operationId: getPopularMovies
+      parameters:
+        - name: region
+          in: query
+          description: Region code for filtering movies (e.g., US, FR)
+          required: false
+          schema:
+            type: string
+        - name: pageNumber
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation

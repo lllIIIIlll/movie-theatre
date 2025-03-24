@@ -215,6 +215,7 @@
                             <exclude>**/dto/**/*</exclude>
                             <exclude>**/model/**/*</exclude>
                             <exclude>**/mapper/search/*</exclude>
+                            <exclude>**/mapper/movie/*</exclude>
                             <exclude>**/controller/**/*</exclude>
                             <exclude>**/MovieTheatreApplication.*</exclude>
                         </excludes>
