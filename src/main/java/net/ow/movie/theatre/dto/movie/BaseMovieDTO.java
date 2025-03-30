@@ -1,5 +1,6 @@
 package net.ow.movie.theatre.dto.movie;
 
+import java.time.Instant;
 import java.util.List;
 import lombok.Data;
 import lombok.ToString;
@@ -15,4 +16,8 @@ public class BaseMovieDTO {
     private String name;
 
     private List<GenreDTO> genres;
+
+    private Instant releaseDate;
+
+    private String overview;
 }
