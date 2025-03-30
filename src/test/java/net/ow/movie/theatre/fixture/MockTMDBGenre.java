@@ -4,7 +4,11 @@ import net.ow.movie.tmdb.model.genre.TMDBGenre;
 
 public class MockTMDBGenre {
     public static TMDBGenre mock(Integer id) {
-        return mock(id, "Action");
+        TMDBGenre tmdbGenre = new TMDBGenre();
+
+        tmdbGenre.setId(id);
+
+        return tmdbGenre;
     }
 
     public static TMDBGenre mock(Integer id, String name) {

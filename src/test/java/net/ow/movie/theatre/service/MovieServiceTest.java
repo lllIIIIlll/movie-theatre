@@ -9,6 +9,7 @@ import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
+import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,55 +30,44 @@ class MovieServiceTest {
 
     @Mock private GenreService genreService;
 
-    @Mock private TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse;
-
-    @Mock private PaginatedResponse<BaseMovieDTO> paginatedResponse;
-
-    @Mock private TMDBBaseMovie tmdbMovie1;
-
-    @Spy private BaseMovieDTO movie1;
-
-    @Mock private GenreDTO genre;
-
     @Test
     void getPopularMoviesTest_OK() {
         String language = "zh-CN";
         Integer page = 1;
         String region = "CH";
 
-        Integer movieId = 1;
         Integer genreId = 1;
-
+        String genreName = "genre-name";
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
         Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
-        List<GenreDTO> genres = List.of(genre);
 
-        List<Integer> genreIds = Collections.singletonList(genreId);
-        when(tmdbMovie1.getId()).thenReturn(movieId);
-        when(tmdbMovie1.getGenreIds()).thenReturn(genreIds);
+        Integer movieId = 1;
+        String movieName = "movie-name";
+        BaseMovieDTO movie =
+                MockBaseMovieDTO.mock(
+                        movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
 
-        List<TMDBBaseMovie> tmdbMovies = List.of(tmdbMovie1);
-        when(tmdbPaginatedResponse.getResults()).thenReturn(tmdbMovies);
-
-        when(movie1.getId()).thenReturn(movieId);
-
-        List<BaseMovieDTO> movies = Collections.singletonList(movie1);
-        when(paginatedResponse.getData()).thenReturn(movies);
+        TMDBBaseMovie tmdbBaseMovie = MockTMDBBaseMovie.mock(movieId);
+        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
+                MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(List.of(tmdbBaseMovie));
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
         when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
+
         when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
-        when(genreService.findGenresByIds(genreIds, genreIdToGenreMap)).thenReturn(genres);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);
 
         assertNotNull(actualResponse);
-        assertFalse(actualResponse.getData().isEmpty());
 
-        verify(movie1, times(1)).setGenres(genres);
-        assertEquals(1, actualResponse.getData().get(0).getGenres().size());
+        assertFalse(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(genre, movie.getGenres().get(0));
     }
 
     @Test
@@ -93,7 +82,10 @@ class MovieServiceTest {
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);
 
-        assertNull(actualResponse);
+        assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
     }
 
     @Test
@@ -102,8 +94,11 @@ class MovieServiceTest {
         Integer page = 1;
         String region = "CH";
 
-        when(tmdbPaginatedResponse.getResults()).thenReturn(Collections.emptyList());
-        when(paginatedResponse.getData()).thenReturn(Collections.emptyList());
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+
+        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
+                MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(Collections.emptyList());
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
@@ -115,5 +110,35 @@ class MovieServiceTest {
 
         assertNotNull(actualResponse);
         assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
+    }
+
+    @Test
+    void getPopularMoviesTest_whenNullTMDBData_thenReturnsEmptyPaginatedResponse() {
+        String language = "zh-CN";
+        Integer page = 1;
+        String region = "CH";
+
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(null);
+
+        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
+                MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(null);
+
+        when(tmdbFeignClient.getPopularMovies(language, page, region))
+                .thenReturn(tmdbPaginatedResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
+                .thenReturn(paginatedResponse);
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.getPopularMovies(language, page, region);
+
+        assertNotNull(actualResponse);
+        assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
     }
 }
