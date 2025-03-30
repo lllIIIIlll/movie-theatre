@@ -1,9 +1,7 @@
 package net.ow.movie.theatre.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
@@ -34,31 +32,18 @@ public class MovieService {
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
-        if (null == paginatedResponse || null == paginatedResponse.getData()) {
-            return paginatedResponse;
+        if (null == paginatedResponse) {
+            return new PaginatedResponse<>();
+        }
+
+        List<BaseMovieDTO> movies = paginatedResponse.getData();
+        if (null == movies) {
+            return new PaginatedResponse<>();
         }
 
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
-        Map<Integer, List<Integer>> movieIdToGenreIdsMap =
-                createMovieToGenreIdsMapping(tmdbPaginatedResponse.getResults());
-
-        paginatedResponse
-                .getData()
-                .forEach(
-                        movie -> {
-                            Integer movieId = movie.getId();
-                            List<Integer> genreIds =
-                                    movieIdToGenreIdsMap.getOrDefault(
-                                            movieId, Collections.emptyList());
-                            movie.setGenres(
-                                    genreService.findGenresByIds(genreIds, genreIdToGenreMap));
-                        });
+        movies.forEach(movie -> movie.setGenres(genreIdToGenreMap));
 
         return paginatedResponse;
-    }
-
-    private Map<Integer, List<Integer>> createMovieToGenreIdsMapping(List<TMDBBaseMovie> movies) {
-        return movies.stream()
-                .collect(Collectors.toMap(TMDBBaseMovie::getId, TMDBBaseMovie::getGenreIds));
     }
 }

@@ -27,4 +27,12 @@ public interface GenreDTOMapper {
     }
 
     List<GenreDTO> fromTMDBGenres(List<TMDBGenre> tmdbGenres);
+
+    default List<GenreDTO> fromGenreIds(List<Integer> genreIds) {
+        if (null == genreIds) {
+            return Collections.emptyList();
+        }
+
+        return genreIds.stream().map(GenreDTO::new).toList();
+    }
 }
