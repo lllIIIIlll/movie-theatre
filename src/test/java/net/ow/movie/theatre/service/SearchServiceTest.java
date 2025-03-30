@@ -42,6 +42,7 @@ class SearchServiceTest {
 
         assertEquals(actualPaginatedResponse, paginatedResponse);
         verify(tmdbFeignClient, times(1)).search(query, true, language, page);
-        verify(searchResultDTOMapper, times(1)).fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
+        verify(searchResultDTOMapper, times(1))
+                .fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
     }
 }
