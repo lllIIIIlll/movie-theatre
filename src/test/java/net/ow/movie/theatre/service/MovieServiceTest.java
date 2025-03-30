@@ -66,7 +66,8 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
-        when(baseMovieDTOMapper.from(tmdbPaginatedResponse)).thenReturn(paginatedResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
+                .thenReturn(paginatedResponse);
         when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
         when(genreService.findGenresByIds(genreIds, genreIdToGenreMap)).thenReturn(genres);
 
@@ -87,7 +88,7 @@ class MovieServiceTest {
         String region = "CH";
 
         when(tmdbFeignClient.getPopularMovies(language, page, region)).thenReturn(null);
-        when(baseMovieDTOMapper.from((TMDBPaginatedResponse<TMDBBaseMovie>) null)).thenReturn(null);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null)).thenReturn(null);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);
@@ -106,7 +107,8 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
-        when(baseMovieDTOMapper.from(tmdbPaginatedResponse)).thenReturn(paginatedResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
+                .thenReturn(paginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);

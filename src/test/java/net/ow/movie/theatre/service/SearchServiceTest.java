@@ -34,13 +34,14 @@ class SearchServiceTest {
         String language = "en-US";
 
         when(tmdbFeignClient.search(query, true, language, page)).thenReturn(tmdbPaginatedResponse);
-        when(searchResultDTOMapper.from(tmdbPaginatedResponse)).thenReturn(paginatedResponse);
+        when(searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse))
+                .thenReturn(paginatedResponse);
 
         PaginatedResponse<SearchResultDTO> actualPaginatedResponse =
                 searchService.search(query, page, language);
 
         assertEquals(actualPaginatedResponse, paginatedResponse);
         verify(tmdbFeignClient, times(1)).search(query, true, language, page);
-        verify(searchResultDTOMapper, times(1)).from(tmdbPaginatedResponse);
+        verify(searchResultDTOMapper, times(1)).fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
     }
 }

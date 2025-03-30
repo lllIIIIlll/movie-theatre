@@ -23,7 +23,7 @@ public class GenreService {
         TMDBGenreList tmdbGenreList = tmdbFeignClient.getGenres(language);
         log.debug("Fetched genres from TMDB");
 
-        return genreDTOMapper.from(tmdbGenreList);
+        return genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
     }
 
     public Map<Integer, GenreDTO> getAllGenresAsMap(String language) {

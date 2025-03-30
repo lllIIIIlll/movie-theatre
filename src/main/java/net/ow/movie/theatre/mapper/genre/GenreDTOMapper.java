@@ -13,7 +13,7 @@ import org.mapstruct.*;
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface GenreDTOMapper {
-    default List<GenreDTO> from(TMDBGenreList tmdbGenreList) {
+    default List<GenreDTO> fromTMDBGenreList(TMDBGenreList tmdbGenreList) {
         if (null == tmdbGenreList) {
             return Collections.emptyList();
         }
@@ -23,8 +23,8 @@ public interface GenreDTOMapper {
             return Collections.emptyList();
         }
 
-        return from(tmdbGenres);
+        return fromTMDBGenres(tmdbGenres);
     }
 
-    List<GenreDTO> from(List<TMDBGenre> tmdbGenres);
+    List<GenreDTO> fromTMDBGenres(List<TMDBGenre> tmdbGenres);
 }

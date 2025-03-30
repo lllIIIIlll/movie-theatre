@@ -38,13 +38,13 @@ class GenreServiceTest {
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.from(tmdbGenreList)).thenReturn(genres);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
 
         List<GenreDTO> actualGenres = genreService.getAllGenres(language);
 
         assertEquals(genres, actualGenres);
         verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).from(tmdbGenreList);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
     }
 
     @Test
@@ -56,7 +56,7 @@ class GenreServiceTest {
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.from(tmdbGenreList)).thenReturn(genres);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
 
         Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
 
@@ -66,7 +66,7 @@ class GenreServiceTest {
         assertEquals(genre1, genreMap.get(1));
         assertEquals(genre2, genreMap.get(2));
         verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).from(tmdbGenreList);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
     }
 
     @Test
@@ -74,13 +74,13 @@ class GenreServiceTest {
         String language = "zh-CN";
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.from(tmdbGenreList)).thenReturn(Collections.emptyList());
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(Collections.emptyList());
 
         Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
 
         assertTrue(genreMap.isEmpty());
         verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).from(tmdbGenreList);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
     }
 
     @Test
@@ -92,7 +92,7 @@ class GenreServiceTest {
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.from(tmdbGenreList)).thenReturn(genres);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
 
         Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
 
@@ -100,7 +100,7 @@ class GenreServiceTest {
         assertTrue(genreMap.containsKey(1));
         assertEquals(genre2, genreMap.get(1));
         verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).from(tmdbGenreList);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
     }
 
     @Test

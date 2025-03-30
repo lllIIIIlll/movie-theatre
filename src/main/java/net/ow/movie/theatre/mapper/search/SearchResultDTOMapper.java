@@ -26,10 +26,10 @@ public interface SearchResultDTOMapper {
     @SubclassMapping(target = MovieSearchResultDTO.class, source = TMDBMovieSearchResult.class)
     @SubclassMapping(target = TVSearchResultDTO.class, source = TMDBTVSearchResult.class)
     @SubclassMapping(target = PersonSearchResultDTO.class, source = TMDBPersonSearchResult.class)
-    SearchResultDTO from(TMDBSearchResult tmdbSearchResult);
+    SearchResultDTO fromTMDBSearchResult(TMDBSearchResult tmdbSearchResult);
 
     @Mapping(target = "data", source = "results")
     @Mapping(target = "total", source = "totalResults")
-    PaginatedResponse<SearchResultDTO> from(
+    PaginatedResponse<SearchResultDTO> fromTMDBPaginatedSearchResults(
             TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse);
 }

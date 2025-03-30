@@ -33,7 +33,7 @@ public class MovieService {
         log.debug("Fetched popular movie from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                baseMovieDTOMapper.from(tmdbPaginatedResponse);
+                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
         if (null == paginatedResponse || null == paginatedResponse.getData()) {
             return paginatedResponse;
         }

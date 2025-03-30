@@ -26,6 +26,6 @@ public class SearchService {
                 tmdbFeignClient.search(query, TMDBConstant.INCLUDE_ADULT, language, pageNumber);
         log.debug("Searched \"{}\" from tmdb", query);
 
-        return searchResultDTOMapper.from(tmdbPaginatedResponse);
+        return searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
     }
 }

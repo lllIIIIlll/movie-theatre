@@ -21,7 +21,7 @@ class GenreDTOMapperTest {
         TMDBGenre tmdbGenre = MockTMDBGenre.mock(genreId);
         TMDBGenreList tmdbGenreList = MockTMDBGenreList.mock(List.of(tmdbGenre));
 
-        List<GenreDTO> result = genreDTOMapper.from(tmdbGenreList);
+        List<GenreDTO> result = genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
         assertEquals(1, result.size(), "Expected one GenreDTO in the result");
         assertEquals(genreId, result.get(0).getId(), "Expected GenreDTO id to be 1");
         assertEquals("Action", result.get(0).getName(), "Expected GenreDTO name to be 'Action'");
@@ -29,7 +29,7 @@ class GenreDTOMapperTest {
 
     @Test
     void fromTest_whenTMDBGenreListNull_thenReturnsEmptyList() {
-        List<GenreDTO> result = genreDTOMapper.from((TMDBGenreList) null);
+        List<GenreDTO> result = genreDTOMapper.fromTMDBGenreList(null);
 
         assertTrue(result.isEmpty(), "Expected an empty list for null input");
     }
@@ -38,7 +38,7 @@ class GenreDTOMapperTest {
     void fromTest_whenGenresListIsNull_thenReturnsEmptyList() {
         TMDBGenreList tmdbGenreList = MockTMDBGenreList.mock(null);
 
-        List<GenreDTO> result = genreDTOMapper.from(tmdbGenreList);
+        List<GenreDTO> result = genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
         assertTrue(result.isEmpty(), "Expected an empty list for null genres list");
     }
 }
