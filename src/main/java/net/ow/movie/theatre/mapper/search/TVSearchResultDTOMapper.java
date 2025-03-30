@@ -13,5 +13,5 @@ import org.mapstruct.ReportingPolicy;
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TVSearchResultDTOMapper {
-    TVSearchResultDTO from(TMDBTVSearchResult tmdbtvSearchResult);
+    TVSearchResultDTO fromTMDBTVSearchResult(TMDBTVSearchResult tmdbtvSearchResult);
 }

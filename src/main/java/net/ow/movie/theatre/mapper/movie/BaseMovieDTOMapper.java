@@ -13,10 +13,10 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BaseMovieDTOMapper {
     @Mapping(target = "name", source = "title")
-    BaseMovieDTO from(TMDBBaseMovie tmdbBaseMovie);
+    BaseMovieDTO fromTMDBBaseMovie(TMDBBaseMovie tmdbBaseMovie);
 
     @Mapping(target = "data", source = "results")
     @Mapping(target = "total", source = "totalResults")
-    PaginatedResponse<BaseMovieDTO> from(
+    PaginatedResponse<BaseMovieDTO> fromTMDBPaginatedBaseMovies(
             TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse);
 }
