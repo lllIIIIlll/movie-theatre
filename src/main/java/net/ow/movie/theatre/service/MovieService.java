@@ -38,9 +38,6 @@ public class MovieService {
 
         List<BaseMovieDTO> movies = paginatedResponse.getData();
         if (null == movies) {
-            System.out.println(20);
-            System.out.println(20);
-            System.out.println(20);
             return new PaginatedResponse<>();
         }
 
