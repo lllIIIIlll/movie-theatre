@@ -3,7 +3,6 @@ package net.ow.movie.theatre.mapper.genre;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
 import java.util.List;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.fixture.MockGenreDTO;
