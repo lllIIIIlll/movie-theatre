@@ -35,4 +35,12 @@ public class GenreService {
                                 genre -> genre,
                                 (existing, replacement) -> replacement));
     }
+
+    public List<GenreDTO> getMovieGenres(String language) {
+        log.debug("Fetching movie genres from TMDB");
+        TMDBGenreList tmdbGenreList = tmdbFeignClient.getMovieGenres(language);
+        log.debug("Fetched movie genres from TMDB");
+
+        return genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
+    }
 }
