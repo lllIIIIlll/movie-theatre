@@ -1,5 +1,6 @@
 package net.ow.movie.theatre.service;
 
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +33,7 @@ public class MovieService {
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
-        // NOTE: When fetching popular movies from TMDB, only ids are included in the response for
-        // genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
-        paginatedResponse.getData().forEach(movie -> movie.setGenres(genreIdToGenreMap));
-
-        return paginatedResponse;
+        return enrichMoviesWithGenreDetails(paginatedResponse, language);
     }
 
     public PaginatedResponse<BaseMovieDTO> getPopularMovies(
@@ -50,10 +46,24 @@ public class MovieService {
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
-        // NOTE: When fetching popular movies from TMDB, only ids are included in the response for
-        // genres.
+        return enrichMoviesWithGenreDetails(paginatedResponse, language);
+    }
+
+    private PaginatedResponse<BaseMovieDTO> enrichMoviesWithGenreDetails(
+            PaginatedResponse<BaseMovieDTO> paginatedResponse, String language) {
+        // NOTE: When fetching popular movies from TMDB,
+        // only ids are included in the response for genres.
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
-        paginatedResponse.getData().forEach(movie -> movie.setGenres(genreIdToGenreMap));
+        paginatedResponse
+                .getData()
+                .forEach(
+                        movie -> {
+                            List<Integer> genreIds =
+                                    movie.getGenres().stream().map(GenreDTO::getId).toList();
+                            List<GenreDTO> genres =
+                                    genreIds.stream().map(genreIdToGenreMap::get).toList();
+                            movie.setGenres(genres);
+                        });
 
         return paginatedResponse;
     }
