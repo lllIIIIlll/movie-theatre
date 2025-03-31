@@ -3,6 +3,7 @@ package net.ow.movie.theatre.mapper.genre;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.fixture.MockGenreDTO;
@@ -17,7 +18,7 @@ class GenreDTOMapperTest {
     private final GenreDTOMapper genreDTOMapper = Mappers.getMapper(GenreDTOMapper.class);
 
     @Test
-    void fromTest_whenValidTMDBGenreList_OK() {
+    void fromTMDBGenreListTest_whenValidTMDBGenreList_OK() {
         Integer genreId = 1;
         TMDBGenre tmdbGenre = MockTMDBGenre.mock(genreId);
         TMDBGenreList tmdbGenreList = MockTMDBGenreList.mock(List.of(tmdbGenre));
@@ -28,14 +29,14 @@ class GenreDTOMapperTest {
     }
 
     @Test
-    void fromTest_whenTMDBGenreListNull_thenReturnsEmptyList() {
+    void fromTMDBGenreListTest_whenTMDBGenreListNull_thenReturnsEmptyList() {
         List<GenreDTO> result = genreDTOMapper.fromTMDBGenreList(null);
 
         assertTrue(result.isEmpty(), "Expected an empty list for null input");
     }
 
     @Test
-    void fromTest_whenGenresListIsNull_thenReturnsEmptyList() {
+    void fromTMDBGenreListTest_whenGenresListIsNull_thenReturnsEmptyList() {
         TMDBGenreList tmdbGenreList = MockTMDBGenreList.mock(null);
 
         List<GenreDTO> result = genreDTOMapper.fromTMDBGenreList(tmdbGenreList);

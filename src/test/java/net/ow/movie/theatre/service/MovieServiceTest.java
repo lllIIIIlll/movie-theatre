@@ -12,6 +12,7 @@ import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
+import net.ow.movie.tmdb.model.common.TMDBDateRangePaginatedResponse;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,97 @@ class MovieServiceTest {
     @Mock private BaseMovieDTOMapper baseMovieDTOMapper;
 
     @Mock private GenreService genreService;
+
+    @Test
+    void getNowPlayingMoviesTest_OK() {
+        String language = "zh-CN";
+        Integer page = 1;
+        String region = "CH";
+
+        Integer genreId = 1;
+        String genreName = "genre-name";
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
+        Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
+
+        Integer movieId = 1;
+        String movieName = "movie-name";
+        BaseMovieDTO movie =
+                MockBaseMovieDTO.mock(
+                        movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
+
+        TMDBBaseMovie tmdbBaseMovie = MockTMDBBaseMovie.mock(movieId);
+        TMDBDateRangePaginatedResponse<TMDBBaseMovie> tmdbDateRangePaginatedResponse =
+                MockDateRangePaginatedResponse.mockDateRangePaginatedTMDBBaseMovie(
+                        List.of(tmdbBaseMovie));
+
+        when(tmdbFeignClient.getNowPlayingMovies(language, page, region))
+                .thenReturn(tmdbDateRangePaginatedResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
+                .thenReturn(paginatedResponse);
+
+        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.getNowPlayingMovies(language, page, region);
+
+        assertNotNull(actualResponse);
+
+        assertFalse(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(genre, movie.getGenres().get(0));
+    }
+
+    @Test
+    void getNowPlayingMoviesTest_whenNullTMDBResponse_thenReturnsNull() {
+        String language = "zh-CN";
+        Integer page = 1;
+        String region = "CH";
+
+        PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+
+        when(tmdbFeignClient.getNowPlayingMovies(language, page, region)).thenReturn(null);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
+                .thenReturn(expectedPaginatedResponse);
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.getNowPlayingMovies(language, page, region);
+
+        assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
+    }
+
+    @Test
+    void getNowPlayingMoviesTest_whenTMDBEmptyData_thenReturnsEmptyPaginatedResponse() {
+        String language = "zh-CN";
+        Integer page = 1;
+        String region = "CH";
+
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+
+        TMDBDateRangePaginatedResponse<TMDBBaseMovie> tmdbDateRangePaginatedResponse =
+                MockDateRangePaginatedResponse.mockDateRangePaginatedTMDBBaseMovie(
+                        Collections.emptyList());
+
+        when(tmdbFeignClient.getNowPlayingMovies(language, page, region))
+                .thenReturn(tmdbDateRangePaginatedResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
+                .thenReturn(paginatedResponse);
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.getNowPlayingMovies(language, page, region);
+
+        assertNotNull(actualResponse);
+        assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
+    }
 
     @Test
     void getPopularMoviesTest_OK() {
