@@ -32,15 +32,7 @@ public class MovieService {
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
-        if (null == paginatedResponse) {
-            return new PaginatedResponse<>();
-        }
-
         List<BaseMovieDTO> movies = paginatedResponse.getData();
-        if (null == movies) {
-            return new PaginatedResponse<>();
-        }
-
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
         movies.forEach(movie -> movie.setGenres(genreIdToGenreMap));
 

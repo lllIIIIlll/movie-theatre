@@ -76,8 +76,12 @@ class MovieServiceTest {
         Integer page = 1;
         String region = "CH";
 
+        PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+
         when(tmdbFeignClient.getPopularMovies(language, page, region)).thenReturn(null);
-        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null)).thenReturn(null);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
+                .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);
@@ -99,33 +103,6 @@ class MovieServiceTest {
 
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
                 MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(Collections.emptyList());
-
-        when(tmdbFeignClient.getPopularMovies(language, page, region))
-                .thenReturn(tmdbPaginatedResponse);
-        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
-                .thenReturn(paginatedResponse);
-
-        PaginatedResponse<BaseMovieDTO> actualResponse =
-                movieService.getPopularMovies(language, page, region);
-
-        assertNotNull(actualResponse);
-        assertTrue(actualResponse.getData().isEmpty());
-        assertEquals(1, actualResponse.getPage());
-        assertEquals(1, actualResponse.getTotalPages());
-        assertEquals(0, actualResponse.getTotal());
-    }
-
-    @Test
-    void getPopularMoviesTest_whenNullTMDBData_thenReturnsEmptyPaginatedResponse() {
-        String language = "zh-CN";
-        Integer page = 1;
-        String region = "CH";
-
-        PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(null);
-
-        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
-                MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(null);
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
