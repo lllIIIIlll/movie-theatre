@@ -15,6 +15,7 @@ import org.mapstruct.*;
 @Mapper(
         componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
