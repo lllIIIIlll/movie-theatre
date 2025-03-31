@@ -17,4 +17,10 @@ public class GenreController {
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
         throw new UnsupportedOperationException();
     }
+
+    @GetMapping("/tv-show")
+    public ResponseEntity<List<GenreDTO>> getTVShowGenres(
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
+        throw new UnsupportedOperationException();
+    }
 }

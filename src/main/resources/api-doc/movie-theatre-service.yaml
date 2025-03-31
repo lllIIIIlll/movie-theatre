@@ -180,6 +180,38 @@ paths:
         '500':
           description: Internal server error
 
+  /genres/tv-show:
+      get:
+        tags:
+          - Genres
+        summary: Get TV show genres
+        description: Retrieves a list of all available TV show genres
+        operationId: getTVShowGenres
+        parameters:
+          - name: Accept-Language
+            in: header
+            description: Language code for localized results (e.g., en-US, fr-FR)
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/GenreDTO'
+          '400':
+            description: Bad request - Invalid parameters
+          '401':
+            description: Unauthorized - Authentication is required
+          '403':
+            description: Forbidden - Insufficient permissions to access this resource
+          '500':
+            description: Internal server error
+
 components:
   schemas:
     PaginatedResponseSearchResultDTO:
