@@ -116,7 +116,7 @@ paths:
             required: false
             schema:
               type: string
-          - name: pageNumber
+          - name: page
             in: query
             description: Page number for paginated results
             required: false

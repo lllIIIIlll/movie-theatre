@@ -22,12 +22,30 @@ public class MovieService {
 
     private final GenreService genreService;
 
+    public PaginatedResponse<BaseMovieDTO> getNowPlayingMovies(
+            String language, Integer page, String region) {
+        log.debug("Fetching now playing movies from tmdb");
+        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
+                tmdbFeignClient.getNowPlayingMovies(language, page, region);
+        log.debug("Fetched now playing movies from tmdb");
+
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
+
+        // NOTE: When fetching popular movies from TMDB, only ids are included in the response for
+        // genres.
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
+        paginatedResponse.getData().forEach(movie -> movie.setGenres(genreIdToGenreMap));
+
+        return paginatedResponse;
+    }
+
     public PaginatedResponse<BaseMovieDTO> getPopularMovies(
             String language, Integer page, String region) {
-        log.debug("Fetching popular movie from tmdb");
+        log.debug("Fetching popular movies from tmdb");
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
                 tmdbFeignClient.getPopularMovies(language, page, region);
-        log.debug("Fetched popular movie from tmdb");
+        log.debug("Fetched popular movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);

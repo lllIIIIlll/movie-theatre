@@ -26,8 +26,8 @@ public class MovieController {
     @GetMapping("/now-playing")
     public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getNowPlayingMovies(
             @RequestParam(required = false) String region,
-            @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new RuntimeException("Not implemented yet");
+        return ResponseEntity.ok(movieService.getNowPlayingMovies(language, page, region));
     }
 }
