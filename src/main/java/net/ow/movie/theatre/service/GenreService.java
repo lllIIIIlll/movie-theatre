@@ -35,13 +35,4 @@ public class GenreService {
                                 genre -> genre,
                                 (existing, replacement) -> replacement));
     }
-
-    public List<GenreDTO> findGenresByIds(
-            List<Integer> genreIds, Map<Integer, GenreDTO> genreIdToGenreMap) {
-        return genreIds.stream()
-                .distinct()
-                .map(genreIdToGenreMap::get)
-                .filter(Objects::nonNull)
-                .toList();
-    }
 }
