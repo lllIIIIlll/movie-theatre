@@ -6,6 +6,8 @@ info:
     This microservice is designed to retrieve movie information from TMDB (The Movie Database) and download related resources from the internet. It provides a comprehensive API for querying, filtering, and managing movie data, supporting efficient content retrieval and resource acquisition.
 
 tags:
+  - name: Genres
+    description: Operations related to movie and TV show genres
   - name: Movies
     description: Operations related to movie information
   - name: Search
@@ -145,6 +147,38 @@ paths:
             description: Forbidden - Insufficient permissions to access this resource
           '500':
             description: Internal server error
+
+  /genres/movie:
+    get:
+      tags:
+        - Genres
+      summary: Get movie genres
+      description: Retrieves a list of all available movie genres
+      operationId: getMovieGenres
+      parameters:
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GenreDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
 
 components:
   schemas:
