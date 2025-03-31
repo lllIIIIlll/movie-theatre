@@ -1,6 +1,5 @@
 package net.ow.movie.theatre.service;
 
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +31,11 @@ public class MovieService {
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
-        List<BaseMovieDTO> movies = paginatedResponse.getData();
+
+        // NOTE: When fetching popular movies from TMDB, only ids are included in the response for
+        // genres.
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
-        movies.forEach(movie -> movie.setGenres(genreIdToGenreMap));
+        paginatedResponse.getData().forEach(movie -> movie.setGenres(genreIdToGenreMap));
 
         return paginatedResponse;
     }
