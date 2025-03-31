@@ -18,9 +18,9 @@ public class MovieController {
     @GetMapping("/popular")
     public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getPopularMovies(
             @RequestParam(required = false) String region,
-            @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        return ResponseEntity.ok(movieService.getPopularMovies(language, pageNumber, region));
+        return ResponseEntity.ok(movieService.getPopularMovies(language, page, region));
     }
 
     @GetMapping("/now-playing")
