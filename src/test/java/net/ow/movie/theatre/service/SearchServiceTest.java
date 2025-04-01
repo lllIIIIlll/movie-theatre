@@ -1,10 +1,15 @@
 package net.ow.movie.theatre.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import feign.FeignException;
+import java.util.Collections;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.search.SearchResultDTO;
+import net.ow.movie.theatre.fixture.MockPaginatedResponse;
+import net.ow.movie.theatre.fixture.MockTMDBPaginatedResponse;
 import net.ow.movie.theatre.mapper.search.SearchResultDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
@@ -23,15 +28,16 @@ class SearchServiceTest {
 
     @Mock private SearchResultDTOMapper searchResultDTOMapper;
 
-    @Mock private TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse;
-
-    @Mock private PaginatedResponse<SearchResultDTO> paginatedResponse;
-
     @Test
     void searchTest_OK() {
         String query = "query";
         Integer page = 1;
         String language = "en-US";
+
+        TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse =
+                MockTMDBPaginatedResponse.mockTMDBPaginatedSearchResult(Collections.emptyList());
+        PaginatedResponse<SearchResultDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedSearchResult(Collections.emptyList());
 
         when(tmdbFeignClient.search(query, true, language, page)).thenReturn(tmdbPaginatedResponse);
         when(searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse))
@@ -44,5 +50,18 @@ class SearchServiceTest {
         verify(tmdbFeignClient, times(1)).search(query, true, language, page);
         verify(searchResultDTOMapper, times(1))
                 .fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
+    }
+
+    @Test
+    void searchTest_whenThrowFeignException_thenThrowFeignException() {
+        String query = "query";
+        Integer page = 1;
+        String language = "en-US";
+
+        when(tmdbFeignClient.search(query, true, language, page)).thenThrow(FeignException.class);
+
+        assertThrows(FeignException.class, () -> searchService.search(query, page, language));
+        verify(tmdbFeignClient, times(1)).search(query, true, language, page);
+        verify(searchResultDTOMapper, never()).fromTMDBPaginatedSearchResults(any());
     }
 }
