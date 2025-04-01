@@ -20,7 +20,8 @@ public class MockTMDBPaginatedResponse {
 
     public static TMDBPaginatedResponse<TMDBSearchResult> mockTMDBPaginatedSearchResult(
             List<TMDBSearchResult> results) {
-        TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse = new TMDBPaginatedResponse<>();
+        TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse =
+                new TMDBPaginatedResponse<>();
 
         tmdbPaginatedResponse.setResults(results);
         tmdbPaginatedResponse.setPage(1);

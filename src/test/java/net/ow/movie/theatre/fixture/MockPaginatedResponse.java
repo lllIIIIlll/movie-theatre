@@ -17,7 +17,8 @@ public class MockPaginatedResponse {
         return paginatedResponse;
     }
 
-    public static PaginatedResponse<SearchResultDTO> mockPaginatedSearchResult(List<SearchResultDTO> data) {
+    public static PaginatedResponse<SearchResultDTO> mockPaginatedSearchResult(
+            List<SearchResultDTO> data) {
         PaginatedResponse<SearchResultDTO> paginatedResponse = new PaginatedResponse<>();
 
         paginatedResponse.setData(data);
