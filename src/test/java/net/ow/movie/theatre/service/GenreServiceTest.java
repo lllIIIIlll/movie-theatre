@@ -28,14 +28,12 @@ class GenreServiceTest {
 
     @Mock private TMDBGenreList tmdbGenreList;
 
-    @Mock private GenreDTO genre1;
-
-    @Mock private GenreDTO genre2;
-
     @Test
     void getAllGenresTest_OK() {
         String language = "zh-CN";
 
+        GenreDTO genre1 = MockGenreDTO.mock();
+        GenreDTO genre2 = MockGenreDTO.mock();
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
@@ -52,8 +50,12 @@ class GenreServiceTest {
     void getAllGenresAsMapTest_OK() {
         String language = "zh-CN";
 
-        when(genre1.getId()).thenReturn(1);
-        when(genre2.getId()).thenReturn(2);
+        Integer genre1Id = 1;
+        GenreDTO genre1 = MockGenreDTO.mock(genre1Id);
+
+        Integer genre2Id = 2;
+        GenreDTO genre2 = MockGenreDTO.mock(genre2Id);
+
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
@@ -88,8 +90,10 @@ class GenreServiceTest {
     void getAllGenresAsMapTest_whenDuplicateIds_thenReturnsUniqueGenres() {
         String language = "zh-CN";
 
-        when(genre1.getId()).thenReturn(1);
-        when(genre2.getId()).thenReturn(1);
+        Integer genreId = 1;
+        GenreDTO genre1 = MockGenreDTO.mock(genreId);
+        GenreDTO genre2 = MockGenreDTO.mock(genreId);
+
         List<GenreDTO> genres = List.of(genre1, genre2);
 
         when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
