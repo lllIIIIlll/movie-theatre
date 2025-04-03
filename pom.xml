@@ -46,6 +46,7 @@
 
         <!-- Modules -->
         <log-utils.version>0.2.3</log-utils.version>
+        <error-utils.version>0.2.3</error-utils.version>
         <tmdb-client.version>0.1.0-SNAPSHOT</tmdb-client.version>
 
         <!-- Mapper -->
@@ -96,7 +97,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
+        
         <!-- Shared Modules -->
         <dependency>
             <groupId>net.ow.shared</groupId>
@@ -107,6 +108,11 @@
             <groupId>net.ow.movie</groupId>
             <artifactId>tmdb-client</artifactId>
             <version>${tmdb-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.ow.shared</groupId>
+            <artifactId>error-utils</artifactId>
+            <version>${error-utils.version}</version>
         </dependency>
 
         <!-- Mapper -->
