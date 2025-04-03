@@ -13,6 +13,8 @@ public class BaseMovieDTO {
 
     private String posterPath;
 
+    private String backdropPath;
+
     private String name;
 
     private List<GenreDTO> genres;
