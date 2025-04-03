@@ -152,4 +152,47 @@ class GenreServiceTest {
         verify(tmdbFeignClient, times(1)).getMovieGenres(language);
         verify(genreDTOMapper, never()).fromTMDBGenreList(any());
     }
+
+    @Test
+    void getTVShowGenresTest_OK() {
+        String language = "zh-CN";
+
+        GenreDTO genre1 = MockGenreDTO.mock();
+        GenreDTO genre2 = MockGenreDTO.mock();
+        List<GenreDTO> genres = List.of(genre1, genre2);
+
+        when(tmdbFeignClient.getTVShowGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
+
+        List<GenreDTO> actualGenres = genreService.getTVShowGenres(language);
+
+        assertEquals(genres, actualGenres);
+        verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
+    }
+
+    @Test
+    void getTVShowGenresTest_whenEmptyResponse_thenReturnsEmptyList() {
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getTVShowGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(Collections.emptyList());
+
+        List<GenreDTO> actualGenres = genreService.getTVShowGenres(language);
+
+        assertTrue(actualGenres.isEmpty());
+        verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
+    }
+
+    @Test
+    void getTVShowGenresTest_whenThrowFeignExceptionException_thenThrowsException() {
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getTVShowGenres(language)).thenThrow(FeignException.class);
+
+        assertThrows(FeignException.class, () -> genreService.getTVShowGenres(language));
+        verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
+        verify(genreDTOMapper, never()).fromTMDBGenreList(any());
+    }
 }

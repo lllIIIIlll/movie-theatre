@@ -43,4 +43,12 @@ public class GenreService {
 
         return genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
     }
+
+    public List<GenreDTO> getTVShowGenres(String language) {
+        log.debug("Fetching tv show genres from TMDB");
+        TMDBGenreList tmdbGenreList = tmdbFeignClient.getTVShowGenres(language);
+        log.debug("Fetched tv show genres from TMDB");
+
+        return genreDTOMapper.fromTMDBGenreList(tmdbGenreList);
+    }
 }
