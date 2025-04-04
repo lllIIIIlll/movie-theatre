@@ -147,6 +147,51 @@ paths:
             description: Forbidden - Insufficient permissions to access this resource
           '500':
             description: Internal server error
+            
+  /movies/trending/{time_window}:
+    get:
+      tags:
+        - Movies
+      summary: Get trending movies
+      description: Retrieves a paginated list of trending movies for the specified time window
+      operationId: getTrendingMovies
+      parameters:
+        - name: time_window
+          in: path
+          description: Time window for trending movies (e.g., day, week)
+          required: true
+          schema:
+            type: string
+            enum: [day, week]
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseTrendingMovieDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
 
   /genres/movie:
     get:
@@ -251,6 +296,32 @@ components:
         total:
           type: integer
           description: Total number of results across all pages
+          
+    PaginatedResponseTrendingMovieDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendingMovieDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+    
+    TrendingMovieDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseMovieDTO'
+        - type: object
+          properties:
+            trendingRank:
+              type: integer
+              description: Ranking position in the trending list
     
     SearchResultDTO:
       type: object
