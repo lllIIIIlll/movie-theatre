@@ -1,11 +1,9 @@
 package net.ow.movie.theatre.mapper.search;
 
-import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.search.MovieSearchResultDTO;
 import net.ow.movie.theatre.dto.search.PersonSearchResultDTO;
 import net.ow.movie.theatre.dto.search.SearchResultDTO;
 import net.ow.movie.theatre.dto.search.TVShowSearchResultDTO;
-import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.search.TMDBMovieSearchResult;
 import net.ow.movie.tmdb.model.search.TMDBPersonSearchResult;
 import net.ow.movie.tmdb.model.search.TMDBSearchResult;
@@ -28,9 +26,4 @@ public interface SearchResultDTOMapper {
     @SubclassMapping(target = TVShowSearchResultDTO.class, source = TMDBTVShowSearchResult.class)
     @SubclassMapping(target = PersonSearchResultDTO.class, source = TMDBPersonSearchResult.class)
     SearchResultDTO fromTMDBSearchResult(TMDBSearchResult tmdbSearchResult);
-
-    @Mapping(target = "data", source = "results")
-    @Mapping(target = "total", source = "totalResults")
-    PaginatedResponse<SearchResultDTO> fromTMDBPaginatedSearchResults(
-            TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse);
 }

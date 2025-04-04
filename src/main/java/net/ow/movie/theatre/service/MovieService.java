@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
+import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class MovieService {
     private final TMDBFeignClient tmdbFeignClient;
 
-    private final BaseMovieDTOMapper baseMovieDTOMapper;
+    private final PaginatedResponseMapper paginatedResponseMapper;
 
     private final GenreService genreService;
 
@@ -31,7 +31,7 @@ public class MovieService {
         log.debug("Fetched now playing movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
+                paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
         return enrichMoviesWithGenreDetails(paginatedResponse, language);
     }
@@ -44,7 +44,7 @@ public class MovieService {
         log.debug("Fetched popular movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
+                paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
         return enrichMoviesWithGenreDetails(paginatedResponse, language);
     }

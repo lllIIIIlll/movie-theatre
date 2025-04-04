@@ -1,9 +1,7 @@
 package net.ow.movie.theatre.mapper.movie;
 
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
-import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.mapper.genre.GenreDTOMapper;
-import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import org.mapstruct.*;
 
@@ -18,9 +16,4 @@ public interface BaseMovieDTOMapper {
     @Mapping(target = "name", source = "title")
     @Mapping(target = "genres", source = "genreIds")
     BaseMovieDTO fromTMDBBaseMovie(TMDBBaseMovie tmdbBaseMovie);
-
-    @Mapping(target = "data", source = "results")
-    @Mapping(target = "total", source = "totalResults")
-    PaginatedResponse<BaseMovieDTO> fromTMDBPaginatedBaseMovies(
-            TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse);
 }
