@@ -10,7 +10,7 @@ import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.search.SearchResultDTO;
 import net.ow.movie.theatre.fixture.MockPaginatedResponse;
 import net.ow.movie.theatre.fixture.MockTMDBPaginatedResponse;
-import net.ow.movie.theatre.mapper.search.SearchResultDTOMapper;
+import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.search.TMDBSearchResult;
@@ -26,7 +26,7 @@ class SearchServiceTest {
 
     @Mock private TMDBFeignClient tmdbFeignClient;
 
-    @Mock private SearchResultDTOMapper searchResultDTOMapper;
+    @Mock private PaginatedResponseMapper paginatedResponseMapper;
 
     @Test
     void searchTest_OK() {
@@ -40,7 +40,7 @@ class SearchServiceTest {
                 MockPaginatedResponse.mockPaginatedSearchResult(Collections.emptyList());
 
         when(tmdbFeignClient.search(query, true, language, page)).thenReturn(tmdbPaginatedResponse);
-        when(searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse))
+        when(paginatedResponseMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         PaginatedResponse<SearchResultDTO> actualPaginatedResponse =
@@ -48,7 +48,7 @@ class SearchServiceTest {
 
         assertEquals(actualPaginatedResponse, paginatedResponse);
         verify(tmdbFeignClient, times(1)).search(query, true, language, page);
-        verify(searchResultDTOMapper, times(1))
+        verify(paginatedResponseMapper, times(1))
                 .fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
     }
 
@@ -62,6 +62,6 @@ class SearchServiceTest {
 
         assertThrows(FeignException.class, () -> searchService.search(query, page, language));
         verify(tmdbFeignClient, times(1)).search(query, true, language, page);
-        verify(searchResultDTOMapper, never()).fromTMDBPaginatedSearchResults(any());
+        verify(paginatedResponseMapper, never()).fromTMDBPaginatedSearchResults(any());
     }
 }
