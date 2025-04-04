@@ -37,6 +37,6 @@ public class MovieController {
             @PathVariable(value = "time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new UnsupportedOperationException();
+        return ResponseEntity.ok(movieService.getTrendingMovies(timeWindow, language, page));
     }
 }
