@@ -10,6 +10,8 @@ tags:
     description: Operations related to movie and TV show genres
   - name: Movies
     description: Operations related to movie information
+  - name: TV Shows
+    description: Operations related to TV show information
   - name: Search
     description: Search operations across movies, TV shows, and people
 
@@ -257,6 +259,51 @@ paths:
           '500':
             description: Internal server error
 
+  /tv-shows/trending/{time_window}:
+    get:
+      tags:
+        - TV Shows
+      summary: Get trending TV shows
+      description: Retrieves a paginated list of trending TV shows for the specified time window
+      operationId: getTrendingTVShows
+      parameters:
+        - name: time_window
+          in: path
+          description: Time window for trending TV shows (e.g., day, week)
+          required: true
+          schema:
+            type: string
+            enum: [day, week]
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseTrendingTVShowDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     PaginatedResponseSearchResultDTO:
@@ -437,4 +484,56 @@ components:
         name:
           type: string
           description: Name of the genre
+
+    PaginatedResponseTrendingTVShowDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendingTVShowDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+    
+    TrendingTVShowDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the TV show
+        mediaType:
+          type: string
+          description: Type of media (tv)
+        posterPath:
+          type: string
+          description: Path to the TV show's poster image
+        backdropPath:
+          type: string
+          description: Path to the TV show's backdrop image
+        name:
+          type: string
+          description: Name/title of the TV show
+        genres:
+          type: array
+          description: List of genres associated with the TV show
+          items:
+            $ref: '#/components/schemas/GenreDTO'
+        releaseDate:
+          type: string
+          format: date-time
+          description: Release date of the TV show
+        overview:
+          type: string
+          description: Overview or summary of the TV show plot
+        rating:
+          type: number
+          format: decimal
+          description: TV show rating
       
