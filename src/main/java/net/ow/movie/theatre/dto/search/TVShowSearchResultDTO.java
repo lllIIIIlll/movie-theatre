@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TVSearchResultDTO extends SearchResultDTO {
+public class TVShowSearchResultDTO extends SearchResultDTO {
     private Integer id;
 
     private String mediaType;
