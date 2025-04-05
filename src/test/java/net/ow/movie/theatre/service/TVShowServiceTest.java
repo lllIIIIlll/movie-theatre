@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TVShowServiceTest {
+class TVShowServiceTest {
     @InjectMocks private TVShowService tvShowService;
 
     @Mock private TMDBFeignClient tmdbFeignClient;
