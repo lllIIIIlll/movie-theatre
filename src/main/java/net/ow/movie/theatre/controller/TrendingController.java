@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.trending.TrendingDTO;
+import net.ow.movie.theatre.service.TrendingService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/trending")
 public class TrendingController {
+    private final TrendingService trendingService;
 
     @GetMapping("/{time_window}")
     public ResponseEntity<PaginatedResponse<TrendingDTO>> getTrendingContent(
@@ -33,6 +35,6 @@ public class TrendingController {
                     @Max(value = 500, message = "Page must be less then 500")
                     Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new UnsupportedOperationException();
+        return ResponseEntity.ok(trendingService.getTrendingContent(timeWindow, page, language));
     }
 }
