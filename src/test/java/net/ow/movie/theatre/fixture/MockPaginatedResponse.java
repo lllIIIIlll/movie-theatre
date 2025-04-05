@@ -5,8 +5,6 @@ import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.search.SearchResultDTO;
 import net.ow.movie.theatre.dto.trending.TrendingDTO;
-import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
-import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
 
 public class MockPaginatedResponse {
@@ -33,31 +31,8 @@ public class MockPaginatedResponse {
         return paginatedResponse;
     }
 
-    public static PaginatedResponse<TrendingTVShowDTO> mockPaginatedTrendingTVShow(
-            List<TrendingTVShowDTO> data) {
-        PaginatedResponse<TrendingTVShowDTO> paginatedResponse = new PaginatedResponse<>();
-
-        paginatedResponse.setData(data);
-        paginatedResponse.setPage(1);
-        paginatedResponse.setTotalPages(1);
-        paginatedResponse.setTotal(null == data ? 0 : data.size());
-
-        return paginatedResponse;
-    }
-
-    public static PaginatedResponse<TrendingMovieDTO> mockPaginatedTrendingMovie(
-            List<TrendingMovieDTO> data) {
-        PaginatedResponse<TrendingMovieDTO> paginatedResponse = new PaginatedResponse<>();
-
-        paginatedResponse.setData(data);
-        paginatedResponse.setPage(1);
-        paginatedResponse.setTotalPages(1);
-        paginatedResponse.setTotal(null == data ? 0 : data.size());
-
-        return paginatedResponse;
-    }
-
-    public static PaginatedResponse<BaseMovieDTO> mockPaginatedBaseMovie(List<BaseMovieDTO> data) {
+    public static PaginatedResponse<BaseMovieDTO> mockPaginatedBaseMovieDTO(
+            List<BaseMovieDTO> data) {
         PaginatedResponse<BaseMovieDTO> paginatedResponse = new PaginatedResponse<>();
 
         paginatedResponse.setData(data);
@@ -68,7 +43,7 @@ public class MockPaginatedResponse {
         return paginatedResponse;
     }
 
-    public static PaginatedResponse<SearchResultDTO> mockPaginatedSearchResult(
+    public static PaginatedResponse<SearchResultDTO> mockPaginatedSearchResultDTO(
             List<SearchResultDTO> data) {
         PaginatedResponse<SearchResultDTO> paginatedResponse = new PaginatedResponse<>();
 

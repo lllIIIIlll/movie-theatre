@@ -49,7 +49,7 @@ class MovieServiceTest {
                 MockBaseMovieDTO.mock(
                         movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(List.of(movie));
 
         TMDBTrendingMovie tmdbTrendingMovie = MockTMDBTrendingMovie.mock(movieId);
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
@@ -80,7 +80,7 @@ class MovieServiceTest {
         Integer page = 1;
 
         PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingMovies(timeWindow, language, page)).thenReturn(null);
         when(baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(null))
@@ -105,7 +105,7 @@ class MovieServiceTest {
                 MockTMDBPaginatedResponse.mockTMDBPaginatedTrendingMovie(Collections.emptyList());
 
         PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingMovies(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
@@ -138,7 +138,7 @@ class MovieServiceTest {
                 MockBaseMovieDTO.mock(
                         movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(List.of(movie));
 
         TMDBBaseMovie tmdbBaseMovie = MockTMDBBaseMovie.mock(movieId);
         TMDBDateRangePaginatedResponse<TMDBBaseMovie> tmdbDateRangePaginatedResponse =
@@ -169,7 +169,7 @@ class MovieServiceTest {
         String region = "CH";
 
         PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getNowPlayingMovies(language, page, region)).thenReturn(null);
         when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
@@ -191,7 +191,7 @@ class MovieServiceTest {
         String region = "CH";
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         TMDBDateRangePaginatedResponse<TMDBBaseMovie> tmdbDateRangePaginatedResponse =
                 MockDateRangePaginatedResponse.mockDateRangePaginatedTMDBBaseMovie(
@@ -229,7 +229,7 @@ class MovieServiceTest {
                 MockBaseMovieDTO.mock(
                         movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(List.of(movie));
 
         TMDBBaseMovie tmdbBaseMovie = MockTMDBBaseMovie.mock(movieId);
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
@@ -259,7 +259,7 @@ class MovieServiceTest {
         String region = "CH";
 
         PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getPopularMovies(language, page, region)).thenReturn(null);
         when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
@@ -281,7 +281,7 @@ class MovieServiceTest {
         String region = "CH";
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
 
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
                 MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(Collections.emptyList());

@@ -37,7 +37,7 @@ class SearchServiceTest {
         TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse =
                 MockTMDBPaginatedResponse.mockTMDBPaginatedSearchResult(Collections.emptyList());
         PaginatedResponse<SearchResultDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedSearchResult(Collections.emptyList());
+                MockPaginatedResponse.mockPaginatedSearchResultDTO(Collections.emptyList());
 
         when(tmdbFeignClient.search(query, true, language, page)).thenReturn(tmdbPaginatedResponse);
         when(searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse))
