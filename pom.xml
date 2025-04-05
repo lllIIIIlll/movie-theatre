@@ -222,6 +222,7 @@
                             <exclude>**/model/**/*</exclude>
                             <exclude>**/mapper/search/*</exclude>
                             <exclude>**/mapper/movie/*</exclude>
+                            <exclude>**/mapper/tv/*</exclude>
                             <exclude>**/mapper/PaginatedResponseMapper*.*</exclude>
                             <exclude>**/controller/**/*</exclude>
                             <exclude>**/MovieTheatreApplication.*</exclude>
