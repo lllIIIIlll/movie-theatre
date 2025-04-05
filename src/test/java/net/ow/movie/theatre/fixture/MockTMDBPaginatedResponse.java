@@ -4,10 +4,23 @@ import java.util.List;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import net.ow.movie.tmdb.model.search.TMDBSearchResult;
+import net.ow.movie.tmdb.model.trending.TMDBTrending;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
 
 public class MockTMDBPaginatedResponse {
+    public static TMDBPaginatedResponse<TMDBTrending> mockTMDBPaginatedTrending(
+            List<TMDBTrending> results) {
+        TMDBPaginatedResponse<TMDBTrending> tmdbPaginatedResponse = new TMDBPaginatedResponse<>();
+
+        tmdbPaginatedResponse.setResults(results);
+        tmdbPaginatedResponse.setPage(1);
+        tmdbPaginatedResponse.setTotalPages(1);
+        tmdbPaginatedResponse.setTotalResults(null == results ? 0 : results.size());
+
+        return tmdbPaginatedResponse;
+    }
+
     public static TMDBPaginatedResponse<TMDBTrendingMovie> mockTMDBPaginatedTrendingMovie(
             List<TMDBTrendingMovie> results) {
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
