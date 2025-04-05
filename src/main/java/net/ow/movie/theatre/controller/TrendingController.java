@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrendingController {
     private final TrendingService trendingService;
 
-    @GetMapping("/{time_window}")
+    @GetMapping
     public ResponseEntity<PaginatedResponse<TrendingDTO>> getTrendingContent(
-            @PathVariable("time_window") String timeWindow,
+            @RequestParam("time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1")
                     @Valid
                     @Min(value = 1, message = "Page must be at least 1")
