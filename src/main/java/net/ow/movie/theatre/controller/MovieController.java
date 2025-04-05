@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.service.MovieService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +45,7 @@ public class MovieController {
     }
 
     @GetMapping("/trending/{time_window}")
-    public ResponseEntity<PaginatedResponse<TrendingMovieDTO>> getTrendingMovies(
+    public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getTrendingMovies(
             @PathVariable(value = "time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1")
                     @Valid

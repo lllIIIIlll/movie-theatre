@@ -191,7 +191,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedResponseTrendingMovieDTO'
+                $ref: '#/components/schemas/PaginatedResponseBaseMovieDTO'
         '400':
           description: Bad request - Invalid parameters
         '401':
@@ -387,23 +387,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BaseMovieDTO'
-        page:
-          type: integer
-          description: Current page number
-        totalPages:
-          type: integer
-          description: Total number of pages available
-        total:
-          type: integer
-          description: Total number of results across all pages
-          
-    PaginatedResponseTrendingMovieDTO:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrendingMovieDTO'
         page:
           type: integer
           description: Current page number
