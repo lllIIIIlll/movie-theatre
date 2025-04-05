@@ -1,9 +1,11 @@
 package net.ow.movie.theatre.mapper.trending;
 
+import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.trending.TrendingDTO;
 import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.dto.trending.TrendingPersonDTO;
 import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
+import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrending;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingPerson;
@@ -26,4 +28,9 @@ public interface TrendingDTOMapper {
     @SubclassMapping(target = TrendingTVShowDTO.class, source = TMDBTrendingTVShow.class)
     @SubclassMapping(target = TrendingPersonDTO.class, source = TMDBTrendingPerson.class)
     TrendingDTO fromTMDBTrending(TMDBTrending tmdbTrending);
+
+    @Mapping(target = "data", source = "results")
+    @Mapping(target = "total", source = "totalResults")
+    PaginatedResponse<TrendingDTO> fromTMDBPaginatedTrending(
+            TMDBPaginatedResponse<TMDBTrending> tmdbPaginatedResponse);
 }
