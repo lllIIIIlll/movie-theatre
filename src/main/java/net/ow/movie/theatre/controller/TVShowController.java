@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
+import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
 import net.ow.movie.theatre.service.TVShowService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class TVShowController {
     private final TVShowService tvShowService;
 
     @GetMapping("/trending/{time_window}")
-    public ResponseEntity<PaginatedResponse<TrendingTVShowDTO>> getTrendingTVShows(
+    public ResponseEntity<PaginatedResponse<BaseTVShowDTO>> getTrendingTVShows(
             @PathVariable(value = "time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1")
                     @Valid

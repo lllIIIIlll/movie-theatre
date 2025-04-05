@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
+import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
 import net.ow.movie.theatre.fixture.*;
-import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
+import net.ow.movie.theatre.mapper.tv.BaseTVShowDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
@@ -27,7 +27,7 @@ class TVShowServiceTest {
 
     @Mock private TMDBFeignClient tmdbFeignClient;
 
-    @Mock private PaginatedResponseMapper paginatedResponseMapper;
+    @Mock private BaseTVShowDTOMapper baseTVShowDTOMapper;
 
     @Mock private GenreService genreService;
 
@@ -44,11 +44,11 @@ class TVShowServiceTest {
 
         Integer tvShowId = 1;
         String tvShowName = "tv-show-name";
-        TrendingTVShowDTO tvShow =
-                MockTrendingTVShowDTO.mock(
+        BaseTVShowDTO tvShow =
+                MockBaseTVShowDTO.mock(
                         tvShowId, tvShowName, List.of(MockGenreDTO.mock(genreId, null)));
-        PaginatedResponse<TrendingTVShowDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingTVShow(List.of(tvShow));
+        PaginatedResponse<BaseTVShowDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseTVShowDTO(List.of(tvShow));
 
         TMDBTrendingTVShow trendingTVShow = MockTMDBTrendingTVShow.mock(tvShowId);
         TMDBPaginatedResponse<TMDBTrendingTVShow> tmdbPaginatedResponse =
@@ -56,12 +56,12 @@ class TVShowServiceTest {
 
         when(tmdbFeignClient.getTrendingTVShows(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse))
+        when(baseTVShowDTOMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
-        PaginatedResponse<TrendingTVShowDTO> actualResponse =
+        PaginatedResponse<BaseTVShowDTO> actualResponse =
                 tvShowService.getTrendingTVShows(timeWindow, page, language);
 
         assertNotNull(actualResponse);
@@ -77,14 +77,14 @@ class TVShowServiceTest {
         String language = "zh-CN";
         Integer page = 1;
 
-        PaginatedResponse<TrendingTVShowDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingTVShow(Collections.emptyList());
+        PaginatedResponse<BaseTVShowDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseTVShowDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingTVShows(timeWindow, language, page)).thenReturn(null);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingTVShows(null))
+        when(baseTVShowDTOMapper.fromTMDBPaginatedTrendingTVShows(null))
                 .thenReturn(expectedPaginatedResponse);
 
-        PaginatedResponse<TrendingTVShowDTO> actualResponse =
+        PaginatedResponse<BaseTVShowDTO> actualResponse =
                 tvShowService.getTrendingTVShows(timeWindow, page, language);
 
         assertTrue(actualResponse.getData().isEmpty());
@@ -102,15 +102,15 @@ class TVShowServiceTest {
         TMDBPaginatedResponse<TMDBTrendingTVShow> tmdbPaginatedResponse =
                 MockTMDBPaginatedResponse.mockTMDBPaginatedTrendingTVShow(Collections.emptyList());
 
-        PaginatedResponse<TrendingTVShowDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingTVShow(Collections.emptyList());
+        PaginatedResponse<BaseTVShowDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseTVShowDTO(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingTVShows(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse))
+        when(baseTVShowDTOMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse))
                 .thenReturn(expectedPaginatedResponse);
 
-        PaginatedResponse<TrendingTVShowDTO> actualResponse =
+        PaginatedResponse<BaseTVShowDTO> actualResponse =
                 tvShowService.getTrendingTVShows(timeWindow, page, language);
 
         assertTrue(actualResponse.getData().isEmpty());
