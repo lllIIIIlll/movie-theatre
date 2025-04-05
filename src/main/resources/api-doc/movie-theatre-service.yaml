@@ -12,6 +12,8 @@ tags:
     description: Operations related to movie information
   - name: TV Shows
     description: Operations related to TV show information
+  - name: Trending
+    description: Operations related to trending content across all media types
   - name: Search
     description: Search operations across movies, TV shows, and people
 
@@ -304,6 +306,52 @@ paths:
         '500':
           description: Internal server error
 
+  /trending/{time_window}:
+    get:
+      tags:
+        - Trending
+      summary: Get trending content
+      description: Retrieves a paginated list of trending content (movies, TV shows, people) for the specified time window
+      operationId: getTrendingContent
+      parameters:
+        - name: time_window
+          in: path
+          description: Time window for trending content (e.g., day, week)
+          required: true
+          schema:
+            type: string
+            enum: [day, week]
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 500
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseTrendingDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     PaginatedResponseSearchResultDTO:
@@ -360,19 +408,71 @@ components:
         total:
           type: integer
           description: Total number of results across all pages
-    
-    TrendingMovieDTO:
-      allOf:
-        - $ref: '#/components/schemas/BaseMovieDTO'
-        - type: object
-          properties:
-            trendingRank:
-              type: integer
-              description: Ranking position in the trending list
-    
+
+    PaginatedResponseTrendingTVShowDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendingTVShowDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+  
+    PaginatedResponseTrendingDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/TrendingMovieDTO'
+              - $ref: '#/components/schemas/TrendingTVShowDTO'
+              - $ref: '#/components/schemas/TrendingPersonDTO'
+        page:
+          type: integer
+          description: Current page number
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        total:
+          type: integer
+          description: Total number of results across all pages
+
     SearchResultDTO:
       type: object
       description: Base search result DTO
+
+    PersonSearchResultDTO:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultDTO'
+        - type: object
+          xml:
+            name: "PersonSearchResult"
+          properties:
+            id:
+              type: integer
+              description: Person ID
+            mediaType:
+              type: enum
+              enum: [person]
+              description: Type of media (person)
+            name:
+              type: string
+              description: Person's name
+            overview:
+              type: string
+              description: Person's biography
+            posterPath:
+              type: string
+              description: Path to person's profile image
 
     MovieSearchResultDTO:
       allOf:
@@ -426,30 +526,6 @@ components:
               type: string
               description: Path to TV show poster image
 
-    PersonSearchResultDTO:
-      allOf:
-        - $ref: '#/components/schemas/SearchResultDTO'
-        - type: object
-          xml:
-            name: "PersonSearchResult"
-          properties:
-            id:
-              type: integer
-              description: Person ID
-            mediaType:
-              type: enum
-              enum: [person]
-              description: Type of media (person)
-            name:
-              type: string
-              description: Person's name
-            overview:
-              type: string
-              description: Person's biography
-            posterPath:
-              type: string
-              description: Path to person's profile image
-
     BaseMovieDTO:
       type: object
       properties:
@@ -484,56 +560,89 @@ components:
         name:
           type: string
           description: Name of the genre
-
-    PaginatedResponseTrendingTVShowDTO:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrendingTVShowDTO'
-        page:
-          type: integer
-          description: Current page number
-        totalPages:
-          type: integer
-          description: Total number of pages available
-        total:
-          type: integer
-          description: Total number of results across all pages
     
-    TrendingTVShowDTO:
+    TrendingDTO:
       type: object
-      properties:
-        id:
-          type: integer
-          description: Unique identifier of the TV show
-        mediaType:
-          type: string
-          description: Type of media (tv)
-        posterPath:
-          type: string
-          description: Path to the TV show's poster image
-        backdropPath:
-          type: string
-          description: Path to the TV show's backdrop image
-        name:
-          type: string
-          description: Name/title of the TV show
-        genres:
-          type: array
-          description: List of genres associated with the TV show
-          items:
-            $ref: '#/components/schemas/GenreDTO'
-        releaseDate:
-          type: string
-          format: date-time
-          description: Release date of the TV show
-        overview:
-          type: string
-          description: Overview or summary of the TV show plot
-        rating:
-          type: number
-          format: decimal
-          description: TV show rating
+      description: Trending DTO
+
+    TrendingMovieDTO:
+      allOf:
+        - $ref: '#/components/schemas/TrendingDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier of the movie
+            posterPath:
+              type: string
+              description: Path to the movie's poster image
+            name:
+              type: string
+              description: Name/title of the movie
+            genres:
+              type: array
+              description: List of genres associated with the movie
+              items:
+                $ref: '#/components/schemas/GenreDTO'
+            releaseDate:
+              type: string
+              format: date-time
+              description: Release date of the movie
+            overview:
+              type: string
+              description: Overview or summary of the movie plot
+            rating:
+              type: number
+              format: decimal
+              description: Movie rating
+
+
+    TrendingTVShowDTO:
+      allOf:
+        - $ref: '#/components/schemas/TrendingDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier of the TV show
+            mediaType:
+              type: string
+              description: Type of media (tv)
+            posterPath:
+              type: string
+              description: Path to the TV show's poster image
+            backdropPath:
+              type: string
+              description: Path to the TV show's backdrop image
+            name:
+              type: string
+              description: Name/title of the TV show
+            genres:
+              type: array
+              description: List of genres associated with the TV show
+              items:
+                $ref: '#/components/schemas/GenreDTO'
+            releaseDate:
+              type: string
+              format: date-time
+              description: Release date of the TV show
+            overview:
+              type: string
+              description: Overview or summary of the TV show plot
+            rating:
+              type: number
+              format: decimal
+              description: TV show rating
+    
+    TrendingPersonDTO:
+      allOf:
+        - $ref: '#/components/schemas/TrendingDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier of the TV show
+            mediaType:
+              type: string
+              description: Type of media (tv)
       
