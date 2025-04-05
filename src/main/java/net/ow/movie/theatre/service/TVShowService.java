@@ -40,7 +40,7 @@ public class TVShowService {
             PaginatedResponse<TrendingTVShowDTO> paginatedResponse, String language) {
         // NOTE: When fetching trending tv show from TMDB,
         // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getTVShowGenresAsMap(language);
         paginatedResponse
                 .getData()
                 .forEach(

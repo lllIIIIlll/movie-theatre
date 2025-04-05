@@ -29,86 +29,6 @@ class GenreServiceTest {
     @Mock private TMDBGenreList tmdbGenreList;
 
     @Test
-    void getAllGenresTest_OK() {
-        String language = "zh-CN";
-
-        GenreDTO genre1 = MockGenreDTO.mock();
-        GenreDTO genre2 = MockGenreDTO.mock();
-        List<GenreDTO> genres = List.of(genre1, genre2);
-
-        when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
-
-        List<GenreDTO> actualGenres = genreService.getAllGenres(language);
-
-        assertEquals(genres, actualGenres);
-        verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
-    }
-
-    @Test
-    void getAllGenresAsMapTest_OK() {
-        String language = "zh-CN";
-
-        Integer genre1Id = 1;
-        GenreDTO genre1 = MockGenreDTO.mock(genre1Id);
-
-        Integer genre2Id = 2;
-        GenreDTO genre2 = MockGenreDTO.mock(genre2Id);
-
-        List<GenreDTO> genres = List.of(genre1, genre2);
-
-        when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
-
-        Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
-
-        assertEquals(2, genreMap.size());
-        assertTrue(genreMap.containsKey(1));
-        assertTrue(genreMap.containsKey(2));
-        assertEquals(genre1, genreMap.get(1));
-        assertEquals(genre2, genreMap.get(2));
-        verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
-    }
-
-    @Test
-    void getAllGenresAsMapTest_whenEmptyList_thenReturnsEmptyMap() {
-        String language = "zh-CN";
-
-        when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(Collections.emptyList());
-
-        Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
-
-        assertTrue(genreMap.isEmpty());
-        verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
-    }
-
-    @Test
-    void getAllGenresAsMapTest_whenDuplicateIds_thenReturnsUniqueGenres() {
-        String language = "zh-CN";
-
-        Integer genreId = 1;
-        GenreDTO genre1 = MockGenreDTO.mock(genreId);
-        GenreDTO genre2 = MockGenreDTO.mock(genreId);
-
-        List<GenreDTO> genres = List.of(genre1, genre2);
-
-        when(tmdbFeignClient.getGenres(language)).thenReturn(tmdbGenreList);
-        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
-
-        Map<Integer, GenreDTO> genreMap = genreService.getAllGenresAsMap(language);
-
-        assertEquals(1, genreMap.size());
-        assertTrue(genreMap.containsKey(1));
-        assertEquals(genre2, genreMap.get(1));
-        verify(tmdbFeignClient, times(1)).getGenres(language);
-        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
-    }
-
-    @Test
     void getMovieGenresTest_OK() {
         String language = "zh-CN";
 
@@ -154,6 +74,42 @@ class GenreServiceTest {
     }
 
     @Test
+    void ggetMovieGenresAsMapTest_whenEmptyList_thenReturnsEmptyMap() {
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getMovieGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(Collections.emptyList());
+
+        Map<Integer, GenreDTO> genreMap = genreService.getMovieGenresAsMap(language);
+
+        assertTrue(genreMap.isEmpty());
+        verify(tmdbFeignClient, times(1)).getMovieGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
+    }
+
+    @Test
+    void getMovieGenresAsMapTest_whenDuplicateIds_thenReturnsUniqueGenres() {
+        String language = "zh-CN";
+
+        Integer genreId = 1;
+        GenreDTO genre1 = MockGenreDTO.mock(genreId);
+        GenreDTO genre2 = MockGenreDTO.mock(genreId);
+
+        List<GenreDTO> genres = List.of(genre1, genre2);
+
+        when(tmdbFeignClient.getMovieGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
+
+        Map<Integer, GenreDTO> genreMap = genreService.getMovieGenresAsMap(language);
+
+        assertEquals(1, genreMap.size());
+        assertTrue(genreMap.containsKey(1));
+        assertEquals(genre2, genreMap.get(1));
+        verify(tmdbFeignClient, times(1)).getMovieGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
+    }
+
+    @Test
     void getTVShowGenresTest_OK() {
         String language = "zh-CN";
 
@@ -194,5 +150,41 @@ class GenreServiceTest {
         assertThrows(FeignException.class, () -> genreService.getTVShowGenres(language));
         verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
         verify(genreDTOMapper, never()).fromTMDBGenreList(any());
+    }
+
+    @Test
+    void getTVShowGenresAsMapTest_whenEmptyList_thenReturnsEmptyMap() {
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getTVShowGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(Collections.emptyList());
+
+        Map<Integer, GenreDTO> genreMap = genreService.getTVShowGenresAsMap(language);
+
+        assertTrue(genreMap.isEmpty());
+        verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
+    }
+
+    @Test
+    void getTVShowGenresAsMapTest_whenDuplicateIds_thenReturnsUniqueGenres() {
+        String language = "zh-CN";
+
+        Integer genreId = 1;
+        GenreDTO genre1 = MockGenreDTO.mock(genreId);
+        GenreDTO genre2 = MockGenreDTO.mock(genreId);
+
+        List<GenreDTO> genres = List.of(genre1, genre2);
+
+        when(tmdbFeignClient.getTVShowGenres(language)).thenReturn(tmdbGenreList);
+        when(genreDTOMapper.fromTMDBGenreList(tmdbGenreList)).thenReturn(genres);
+
+        Map<Integer, GenreDTO> genreMap = genreService.getTVShowGenresAsMap(language);
+
+        assertEquals(1, genreMap.size());
+        assertTrue(genreMap.containsKey(1));
+        assertEquals(genre2, genreMap.get(1));
+        verify(tmdbFeignClient, times(1)).getTVShowGenres(language);
+        verify(genreDTOMapper, times(1)).fromTMDBGenreList(tmdbGenreList);
     }
 }
