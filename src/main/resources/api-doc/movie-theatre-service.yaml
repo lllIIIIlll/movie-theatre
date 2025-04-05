@@ -155,7 +155,7 @@ paths:
           '500':
             description: Internal server error
             
-  /movies/trending/{time_window}:
+  /movies/trending:
     get:
       tags:
         - Movies
@@ -164,7 +164,7 @@ paths:
       operationId: getTrendingMovies
       parameters:
         - name: time_window
-          in: path
+          in: query
           description: Time window for trending movies (e.g., day, week)
           required: true
           schema:
@@ -265,7 +265,7 @@ paths:
           '500':
             description: Internal server error
 
-  /tv-shows/trending/{time_window}:
+  /tv-shows/trending:
     get:
       tags:
         - TV Shows
@@ -274,7 +274,7 @@ paths:
       operationId: getTrendingTVShows
       parameters:
         - name: time_window
-          in: path
+          in: query
           description: Time window for trending TV shows (e.g., day, week)
           required: true
           schema:
@@ -311,7 +311,7 @@ paths:
         '500':
           description: Internal server error
 
-  /trending/{time_window}:
+  /trending:
     get:
       tags:
         - Trending
@@ -320,7 +320,7 @@ paths:
       operationId: getTrendingContent
       parameters:
         - name: time_window
-          in: path
+          in: query
           description: Time window for trending content (e.g., day, week)
           required: true
           schema:

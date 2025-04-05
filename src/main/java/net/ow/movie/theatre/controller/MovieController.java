@@ -44,9 +44,9 @@ public class MovieController {
         return ResponseEntity.ok(movieService.getNowPlayingMovies(language, page, region));
     }
 
-    @GetMapping("/trending/{time_window}")
+    @GetMapping("/trending")
     public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getTrendingMovies(
-            @PathVariable(value = "time_window") String timeWindow,
+            @RequestParam(value = "time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1")
                     @Valid
                     @Min(value = 1, message = "Page must be at least 1")

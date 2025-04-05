@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 public class TVShowController {
     private final TVShowService tvShowService;
 
-    @GetMapping("/trending/{time_window}")
+    @GetMapping("/trending")
     public ResponseEntity<PaginatedResponse<BaseTVShowDTO>> getTrendingTVShows(
-            @PathVariable(value = "time_window") String timeWindow,
+            @RequestParam(value = "time_window") String timeWindow,
             @RequestParam(required = false, defaultValue = "1")
                     @Valid
                     @Min(value = 1, message = "Page must be at least 1")
