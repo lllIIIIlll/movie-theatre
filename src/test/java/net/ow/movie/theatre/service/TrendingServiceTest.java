@@ -81,7 +81,8 @@ class TrendingServiceTest {
         when(paginatedResponseMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
-        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<TrendingDTO> actualResponse =
                 trendingService.getTrendingContent(timeWindow, page, language);

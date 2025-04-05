@@ -68,7 +68,7 @@ public class MovieService {
             PaginatedResponse<BaseMovieDTO> paginatedResponse, String language) {
         // NOTE: When fetching popular movies from TMDB,
         // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
         paginatedResponse
                 .getData()
                 .forEach(
@@ -87,7 +87,7 @@ public class MovieService {
             PaginatedResponse<TrendingMovieDTO> paginatedResponse, String language) {
         // NOTE: When fetching popular movies from TMDB,
         // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
         paginatedResponse
                 .getData()
                 .forEach(

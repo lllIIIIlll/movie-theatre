@@ -62,7 +62,7 @@ class MovieServiceTest {
         when(paginatedResponseMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
-        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<TrendingMovieDTO> actualResponse =
                 movieService.getTrendingMovies(timeWindow, language, page);
@@ -151,7 +151,7 @@ class MovieServiceTest {
         when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
                 .thenReturn(paginatedResponse);
 
-        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getNowPlayingMovies(language, page, region);
@@ -241,7 +241,7 @@ class MovieServiceTest {
         when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
-        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getPopularMovies(language, page, region);

@@ -59,7 +59,7 @@ class TVShowServiceTest {
         when(paginatedResponseMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
-        when(genreService.getAllGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+        when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<TrendingTVShowDTO> actualResponse =
                 tvShowService.getTrendingTVShows(timeWindow, page, language);

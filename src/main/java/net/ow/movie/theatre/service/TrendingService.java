@@ -31,22 +31,24 @@ public class TrendingService {
         log.debug("Fetching trending content from TMDB.");
         TMDBPaginatedResponse<TMDBTrending> tmdbPaginatedResponse =
                 tmdbFeignClient.getTrending(timeWindow, language, page);
-        log.debug("Fetched trending content form TMDB.");
+        log.debug("Fetched trending content from TMDB.");
 
         PaginatedResponse<TrendingDTO> paginatedResponse =
                 paginatedResponseMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse);
 
         // NOTE: When fetching trending content from TMDB,
         // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getAllGenresAsMap(language);
-        enrichTrendingContentWithGenreDetails(paginatedResponse, genreIdToGenreMap);
+        Map<Integer, GenreDTO> movieGenresMap = genreService.getMovieGenresAsMap(language);
+        Map<Integer, GenreDTO> tvShowGenresMap = genreService.getTVShowGenresAsMap(language);
+        enrichTrendingContentWithGenres(paginatedResponse, movieGenresMap, tvShowGenresMap);
 
         return paginatedResponse;
     }
 
-    private void enrichTrendingContentWithGenreDetails(
+    private void enrichTrendingContentWithGenres(
             PaginatedResponse<TrendingDTO> paginatedResponse,
-            Map<Integer, GenreDTO> genreIdToGenreMap) {
+            Map<Integer, GenreDTO> movieGenresMap,
+            Map<Integer, GenreDTO> tvShowGenresMap) {
         log.debug("Enriching trending content with genre details.");
 
         paginatedResponse
@@ -54,28 +56,28 @@ public class TrendingService {
                 .forEach(
                         trending -> {
                             if (trending instanceof TrendingMovieDTO movie) {
-                                enrichTrendingMovieWithGenreDetails(movie, genreIdToGenreMap);
+                                enrichMovieWithGenres(movie, movieGenresMap);
                             }
 
                             if (trending instanceof TrendingTVShowDTO tvShow) {
-                                enrichTrendingTVShowWithGenreDetails(tvShow, genreIdToGenreMap);
+                                enrichTvShowWithGenres(tvShow, tvShowGenresMap);
                             }
                         });
     }
 
-    private void enrichTrendingMovieWithGenreDetails(
-            TrendingMovieDTO trendingMovie, Map<Integer, GenreDTO> genreIdToGenreMap) {
+    private void enrichMovieWithGenres(
+            TrendingMovieDTO trendingMovie, Map<Integer, GenreDTO> genresMap) {
         List<Integer> genreIds = trendingMovie.getGenres().stream().map(GenreDTO::getId).toList();
         List<GenreDTO> genres =
-                genreIds.stream().map(genreIdToGenreMap::get).filter(Objects::nonNull).toList();
+                genreIds.stream().map(genresMap::get).filter(Objects::nonNull).toList();
         trendingMovie.setGenres(genres);
     }
 
-    private void enrichTrendingTVShowWithGenreDetails(
-            TrendingTVShowDTO trendingTVShow, Map<Integer, GenreDTO> genreIdToGenreMap) {
+    private void enrichTvShowWithGenres(
+            TrendingTVShowDTO trendingTVShow, Map<Integer, GenreDTO> genresMap) {
         List<Integer> genreIds = trendingTVShow.getGenres().stream().map(GenreDTO::getId).toList();
         List<GenreDTO> genres =
-                genreIds.stream().map(genreIdToGenreMap::get).filter(Objects::nonNull).toList();
+                genreIds.stream().map(genresMap::get).filter(Objects::nonNull).toList();
         trendingTVShow.setGenres(genres);
     }
 }
