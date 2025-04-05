@@ -5,11 +5,25 @@ import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import net.ow.movie.tmdb.model.search.TMDBSearchResult;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
+import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
 
 public class MockTMDBPaginatedResponse {
     public static TMDBPaginatedResponse<TMDBTrendingMovie> mockTMDBPaginatedTrendingMovie(
             List<TMDBTrendingMovie> results) {
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
+                new TMDBPaginatedResponse<>();
+
+        tmdbPaginatedResponse.setResults(results);
+        tmdbPaginatedResponse.setPage(1);
+        tmdbPaginatedResponse.setTotalPages(1);
+        tmdbPaginatedResponse.setTotalResults(null == results ? 0 : results.size());
+
+        return tmdbPaginatedResponse;
+    }
+
+    public static TMDBPaginatedResponse<TMDBTrendingTVShow> mockTMDBPaginatedTrendingTVShow(
+            List<TMDBTrendingTVShow> results) {
+        TMDBPaginatedResponse<TMDBTrendingTVShow> tmdbPaginatedResponse =
                 new TMDBPaginatedResponse<>();
 
         tmdbPaginatedResponse.setResults(results);
