@@ -1,5 +1,6 @@
 package net.ow.movie.theatre.dto.movie;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import lombok.Data;
@@ -10,6 +11,8 @@ import net.ow.movie.theatre.dto.genre.GenreDTO;
 @ToString
 public class BaseMovieDTO {
     private Integer id;
+
+    private String mediaType;
 
     private String posterPath;
 
@@ -22,4 +25,6 @@ public class BaseMovieDTO {
     private Instant releaseDate;
 
     private String overview;
+
+    private BigDecimal rating;
 }

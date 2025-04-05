@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
+import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
@@ -23,19 +23,28 @@ public class MovieService {
 
     private final PaginatedResponseMapper paginatedResponseMapper;
 
+    private final BaseMovieDTOMapper baseMovieDTOMapper;
+
     private final GenreService genreService;
 
-    public PaginatedResponse<TrendingMovieDTO> getTrendingMovies(
+    public PaginatedResponse<BaseMovieDTO> getTrendingMovies(
             String timeWindow, String language, Integer page) {
         log.debug("Fetching trending movies from tmdb");
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
                 tmdbFeignClient.getTrendingMovies(timeWindow, language, page);
         log.debug("Fetched trending movies from tmdb");
 
-        PaginatedResponse<TrendingMovieDTO> paginatedResponse =
-                paginatedResponseMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse);
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse);
 
-        return enrichRendingMoviesWithGenreDetails(paginatedResponse, language);
+        // NOTE: When fetching trending movies from TMDB,
+        // only ids are included in the response for genres.
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
+        paginatedResponse
+                .getData()
+                .forEach(movie -> enrichBaseMovieWithGenres(movie, genreIdToGenreMap));
+
+        return paginatedResponse;
     }
 
     public PaginatedResponse<BaseMovieDTO> getNowPlayingMovies(
@@ -46,9 +55,16 @@ public class MovieService {
         log.debug("Fetched now playing movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
+                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
-        return enrichBaseMoviesWithGenreDetails(paginatedResponse, language);
+        // NOTE: When fetching now playing movies from TMDB,
+        // only ids are included in the response for genres.
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
+        paginatedResponse
+                .getData()
+                .forEach(movie -> enrichBaseMovieWithGenres(movie, genreIdToGenreMap));
+
+        return paginatedResponse;
     }
 
     public PaginatedResponse<BaseMovieDTO> getPopularMovies(
@@ -59,46 +75,24 @@ public class MovieService {
         log.debug("Fetched popular movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
+                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
 
-        return enrichBaseMoviesWithGenreDetails(paginatedResponse, language);
-    }
-
-    private PaginatedResponse<BaseMovieDTO> enrichBaseMoviesWithGenreDetails(
-            PaginatedResponse<BaseMovieDTO> paginatedResponse, String language) {
         // NOTE: When fetching popular movies from TMDB,
         // only ids are included in the response for genres.
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
         paginatedResponse
                 .getData()
-                .forEach(
-                        movie -> {
-                            List<Integer> genreIds =
-                                    movie.getGenres().stream().map(GenreDTO::getId).toList();
-                            List<GenreDTO> genres =
-                                    genreIds.stream().map(genreIdToGenreMap::get).toList();
-                            movie.setGenres(genres);
-                        });
+                .forEach(movie -> enrichBaseMovieWithGenres(movie, genreIdToGenreMap));
 
         return paginatedResponse;
     }
 
-    private PaginatedResponse<TrendingMovieDTO> enrichRendingMoviesWithGenreDetails(
-            PaginatedResponse<TrendingMovieDTO> paginatedResponse, String language) {
-        // NOTE: When fetching popular movies from TMDB,
-        // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
-        paginatedResponse
-                .getData()
-                .forEach(
-                        movie -> {
-                            List<Integer> genreIds =
-                                    movie.getGenres().stream().map(GenreDTO::getId).toList();
-                            List<GenreDTO> genres =
-                                    genreIds.stream().map(genreIdToGenreMap::get).toList();
-                            movie.setGenres(genres);
-                        });
+    private void enrichBaseMovieWithGenres(
+            BaseMovieDTO baseMovie, Map<Integer, GenreDTO> movieGenresMap) {
+        log.debug("Enriching base movie with genre details.");
 
-        return paginatedResponse;
+        List<Integer> genreIds = baseMovie.getGenres().stream().map(GenreDTO::getId).toList();
+        List<GenreDTO> genres = genreIds.stream().map(movieGenresMap::get).toList();
+        baseMovie.setGenres(genres);
     }
 }

@@ -9,9 +9,8 @@ import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.fixture.*;
-import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
+import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBDateRangePaginatedResponse;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
@@ -29,7 +28,7 @@ class MovieServiceTest {
 
     @Mock private TMDBFeignClient tmdbFeignClient;
 
-    @Mock private PaginatedResponseMapper paginatedResponseMapper;
+    @Mock private BaseMovieDTOMapper baseMovieDTOMapper;
 
     @Mock private GenreService genreService;
 
@@ -46,11 +45,11 @@ class MovieServiceTest {
 
         Integer movieId = 1;
         String movieName = "movie-name";
-        TrendingMovieDTO movie =
-                MockTrendingMovieDTO.mock(
+        BaseMovieDTO movie =
+                MockBaseMovieDTO.mock(
                         movieId, movieName, List.of(MockGenreDTO.mock(genreId, null)));
-        PaginatedResponse<TrendingMovieDTO> paginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingMovie(List.of(movie));
+        PaginatedResponse<BaseMovieDTO> paginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(List.of(movie));
 
         TMDBTrendingMovie tmdbTrendingMovie = MockTMDBTrendingMovie.mock(movieId);
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
@@ -59,12 +58,12 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getTrendingMovies(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
-        PaginatedResponse<TrendingMovieDTO> actualResponse =
+        PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getTrendingMovies(timeWindow, language, page);
 
         assertNotNull(actualResponse);
@@ -80,14 +79,14 @@ class MovieServiceTest {
         String language = "zh-CN";
         Integer page = 1;
 
-        PaginatedResponse<TrendingMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingMovie(Collections.emptyList());
+        PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingMovies(timeWindow, language, page)).thenReturn(null);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingMovies(null))
+        when(baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(null))
                 .thenReturn(expectedPaginatedResponse);
 
-        PaginatedResponse<TrendingMovieDTO> actualResponse =
+        PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getTrendingMovies(timeWindow, language, page);
 
         assertTrue(actualResponse.getData().isEmpty());
@@ -105,15 +104,15 @@ class MovieServiceTest {
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
                 MockTMDBPaginatedResponse.mockTMDBPaginatedTrendingMovie(Collections.emptyList());
 
-        PaginatedResponse<TrendingMovieDTO> expectedPaginatedResponse =
-                MockPaginatedResponse.mockPaginatedTrendingMovie(Collections.emptyList());
+        PaginatedResponse<BaseMovieDTO> expectedPaginatedResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
 
         when(tmdbFeignClient.getTrendingMovies(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse))
                 .thenReturn(expectedPaginatedResponse);
 
-        PaginatedResponse<TrendingMovieDTO> actualResponse =
+        PaginatedResponse<BaseMovieDTO> actualResponse =
                 movieService.getTrendingMovies(timeWindow, language, page);
 
         assertTrue(actualResponse.getData().isEmpty());
@@ -148,7 +147,7 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getNowPlayingMovies(language, page, region))
                 .thenReturn(tmdbDateRangePaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
@@ -173,7 +172,7 @@ class MovieServiceTest {
                 MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
 
         when(tmdbFeignClient.getNowPlayingMovies(language, page, region)).thenReturn(null);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(null))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
@@ -200,7 +199,7 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getNowPlayingMovies(language, page, region))
                 .thenReturn(tmdbDateRangePaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbDateRangePaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
@@ -238,7 +237,7 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
@@ -263,7 +262,7 @@ class MovieServiceTest {
                 MockPaginatedResponse.mockPaginatedBaseMovie(Collections.emptyList());
 
         when(tmdbFeignClient.getPopularMovies(language, page, region)).thenReturn(null);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(null))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null))
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
@@ -289,7 +288,7 @@ class MovieServiceTest {
 
         when(tmdbFeignClient.getPopularMovies(language, page, region))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         PaginatedResponse<BaseMovieDTO> actualResponse =
