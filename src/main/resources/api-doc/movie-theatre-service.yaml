@@ -34,7 +34,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: pageNumber
+        - name: page
           in: query
           description: Page number for paginated results
           required: false
@@ -42,6 +42,7 @@ paths:
             type: integer
             default: 1
             minimum: 1
+            maximum: 500
         - name: Accept-Language
           in: header
           description: Language code for localized results (e.g., en-US, fr-FR)
@@ -86,6 +87,7 @@ paths:
             type: integer
             default: 1
             minimum: 1
+            maximum: 500
         - name: Accept-Language
           in: header
           description: Language code for localized results (e.g., en-US, fr-FR)
@@ -130,6 +132,7 @@ paths:
               type: integer
               default: 1
               minimum: 1
+              maximum: 500
           - name: Accept-Language
             in: header
             description: Language code for localized results (e.g., en-US, fr-FR)
@@ -175,6 +178,7 @@ paths:
             type: integer
             default: 1
             minimum: 1
+            maximum: 500
         - name: Accept-Language
           in: header
           description: Language code for localized results (e.g., en-US, fr-FR)
@@ -284,6 +288,7 @@ paths:
             type: integer
             default: 1
             minimum: 1
+            maximum: 500
         - name: Accept-Language
           in: header
           description: Language code for localized results (e.g., en-US, fr-FR)
