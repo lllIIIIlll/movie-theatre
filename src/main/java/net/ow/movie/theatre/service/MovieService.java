@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
 import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MovieService {
     private final TMDBFeignClient tmdbFeignClient;
-
-    private final PaginatedResponseMapper paginatedResponseMapper;
 
     private final BaseMovieDTOMapper baseMovieDTOMapper;
 

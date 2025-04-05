@@ -10,7 +10,7 @@ import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.trending.TrendingDTO;
 import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
-import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
+import net.ow.movie.theatre.mapper.trending.TrendingDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrending;
@@ -24,7 +24,7 @@ public class TrendingService {
 
     private final GenreService genreService;
 
-    private final PaginatedResponseMapper paginatedResponseMapper;
+    private final TrendingDTOMapper trendingDTOMapper;
 
     public PaginatedResponse<TrendingDTO> getTrendingContent(
             String timeWindow, Integer page, String language) {
@@ -34,7 +34,7 @@ public class TrendingService {
         log.debug("Fetched trending content from TMDB.");
 
         PaginatedResponse<TrendingDTO> paginatedResponse =
-                paginatedResponseMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse);
+                trendingDTOMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse);
 
         // NOTE: When fetching trending content from TMDB,
         // only ids are included in the response for genres.

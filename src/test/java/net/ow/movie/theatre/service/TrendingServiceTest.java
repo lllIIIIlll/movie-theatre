@@ -14,7 +14,7 @@ import net.ow.movie.theatre.dto.trending.TrendingMovieDTO;
 import net.ow.movie.theatre.dto.trending.TrendingPersonDTO;
 import net.ow.movie.theatre.dto.trending.TrendingTVShowDTO;
 import net.ow.movie.theatre.fixture.*;
-import net.ow.movie.theatre.mapper.PaginatedResponseMapper;
+import net.ow.movie.theatre.mapper.trending.TrendingDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrending;
@@ -35,7 +35,7 @@ class TrendingServiceTest {
 
     @Mock private GenreService genreService;
 
-    @Mock private PaginatedResponseMapper paginatedResponseMapper;
+    @Mock private TrendingDTOMapper trendingDTOMapper;
 
     @Test
     void getTrendingContentTest_OK() {
@@ -78,7 +78,7 @@ class TrendingServiceTest {
 
         when(tmdbFeignClient.getTrending(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse))
+        when(trendingDTOMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse))
                 .thenReturn(paginatedResponse);
 
         when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
@@ -106,7 +106,7 @@ class TrendingServiceTest {
                 MockPaginatedResponse.mockPaginatedTrending(Collections.emptyList());
 
         when(tmdbFeignClient.getTrending(timeWindow, language, page)).thenReturn(null);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrending(null))
+        when(trendingDTOMapper.fromTMDBPaginatedTrending(null))
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<TrendingDTO> actualResponse =
@@ -132,7 +132,7 @@ class TrendingServiceTest {
 
         when(tmdbFeignClient.getTrending(timeWindow, language, page))
                 .thenReturn(tmdbPaginatedResponse);
-        when(paginatedResponseMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse))
+        when(trendingDTOMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse))
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<TrendingDTO> actualResponse =
