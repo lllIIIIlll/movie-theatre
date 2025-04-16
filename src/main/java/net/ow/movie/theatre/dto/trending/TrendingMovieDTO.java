@@ -1,5 +1,6 @@
 package net.ow.movie.theatre.dto.trending;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -9,6 +10,7 @@ import net.ow.movie.theatre.dto.genre.GenreDTO;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TrendingMovieDTO extends TrendingDTO {
     private Integer id;
 

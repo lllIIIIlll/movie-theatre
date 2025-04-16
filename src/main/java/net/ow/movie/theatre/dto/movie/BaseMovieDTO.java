@@ -1,14 +1,14 @@
 package net.ow.movie.theatre.dto.movie;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import lombok.Data;
-import lombok.ToString;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 
 @Data
-@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseMovieDTO {
     private Integer id;
 
