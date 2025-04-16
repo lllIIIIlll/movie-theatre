@@ -111,50 +111,50 @@ paths:
           description: Internal server error
 
   /movies/now-playing:
-      get:
-        tags:
-          - Movies
-        summary: Get now playing movies
-        description: Retrieves a paginated list of movies currently playing in theaters
-        operationId: getNowPlayingMovies
-        parameters:
-          - name: region
-            in: query
-            description: Region code for filtering movies (e.g., US, FR)
-            required: false
-            schema:
-              type: string
-          - name: page
-            in: query
-            description: Page number for paginated results
-            required: false
-            schema:
-              type: integer
-              default: 1
-              minimum: 1
-              maximum: 500
-          - name: Accept-Language
-            in: header
-            description: Language code for localized results (e.g., en-US, fr-FR)
-            required: true
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PaginatedResponseBaseMovieDTO'
-          '400':
-            description: Bad request - Invalid parameters
-          '401':
-            description: Unauthorized - Authentication is required
-          '403':
-            description: Forbidden - Insufficient permissions to access this resource
-          '500':
-            description: Internal server error
-            
+    get:
+      tags:
+        - Movies
+      summary: Get now playing movies
+      description: Retrieves a paginated list of movies currently playing in theaters
+      operationId: getNowPlayingMovies
+      parameters:
+        - name: region
+          in: query
+          description: Region code for filtering movies (e.g., US, FR)
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 500
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseBaseMovieDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
   /movies/trending:
     get:
       tags:
@@ -198,6 +198,44 @@ paths:
           description: Unauthorized - Authentication is required
         '403':
           description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
+  /movies/{id}:
+    get:
+      tags:
+        - Movies
+      summary: Get movie details by ID
+      description: Retrieves detailed information about a specific movie
+      operationId: getMovieById
+      parameters:
+        - name: id
+          in: path
+          description: Movie ID
+          required: true
+          schema:
+            type: integer
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '404':
+          description: Not found - Movie with the specified ID does not exist
         '500':
           description: Internal server error
 
@@ -538,6 +576,63 @@ components:
         overview:
           type: string
           description: Overview or summary of the movie plot
+          
+    MovieDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseMovieDTO'
+        - type: object
+          properties:
+            casts:
+              type: array
+              description: List of cast members in the movie
+              items:
+                $ref: '#/components/schemas/CastDTO'
+            director:
+              $ref: '#/components/schemas/CrewDTO'
+              description: Director of the movie
+            writer:
+              $ref: '#/components/schemas/CrewDTO'
+              description: Writer of the movie
+            recommendations:
+              type: array
+              description: List of recommended movies
+              items:
+                $ref: '#/components/schemas/BaseMovieDTO'
+                
+    CastDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the cast member
+        name:
+          type: string
+          description: Name of the cast member
+        character:
+          type: string
+          description: Character played by the cast member
+        profilePath:
+          type: string
+          description: Path to the cast member's profile image
+        
+    CrewDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the crew member
+        name:
+          type: string
+          description: Name of the crew member
+        job:
+          type: string
+          description: Job title of the crew member
+        department:
+          type: string
+          description: Department the crew member belongs to
+        profilePath:
+          type: string
+          description: Path to the crew member's profile image
 
     GenreDTO:
       type: object
