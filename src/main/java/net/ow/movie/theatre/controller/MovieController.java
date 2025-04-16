@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
+import net.ow.movie.theatre.dto.movie.MovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.service.MovieService;
 import org.springframework.http.HttpHeaders;
@@ -54,5 +55,12 @@ public class MovieController {
                     Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
         return ResponseEntity.ok(movieService.getTrendingMovies(timeWindow, language, page));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MovieDTO> getMovieById(
+            @PathVariable Integer id,
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
+        throw new UnsupportedOperationException();
     }
 }
