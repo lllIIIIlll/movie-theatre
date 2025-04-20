@@ -8,14 +8,18 @@ import java.util.List;
 import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
+import net.ow.movie.theatre.dto.movie.MovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
+import net.ow.movie.theatre.mapper.movie.MovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBDateRangePaginatedResponse;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
+import net.ow.movie.tmdb.model.movie.TMDBMovie;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
+import net.ow.shared.errorutils.model.APIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +33,8 @@ class MovieServiceTest {
     @Mock private TMDBFeignClient tmdbFeignClient;
 
     @Mock private BaseMovieDTOMapper baseMovieDTOMapper;
+
+    @Mock private MovieDTOMapper movieDTOMapper;
 
     @Mock private GenreService genreService;
 
@@ -299,5 +305,49 @@ class MovieServiceTest {
         assertEquals(1, actualResponse.getPage());
         assertEquals(1, actualResponse.getTotalPages());
         assertEquals(0, actualResponse.getTotal());
+    }
+
+    @Test
+    void getMovieDetailsTest_OK() {
+        Integer movieId = 1;
+        String language = "zh-CN";
+        String movieName = "movie-name";
+
+        Integer genreId = 1;
+        String genreName = "genre-name";
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
+        Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
+
+        Integer recommendedMovieId = 2;
+        String recommendedMovieName = "recommended-movie-name";
+        BaseMovieDTO recommendedMovie =
+                MockBaseMovieDTO.mock(
+                        recommendedMovieId,
+                        recommendedMovieName,
+                        List.of(MockGenreDTO.mock(genreId, null)));
+        MovieDTO movieDTO = MockMovieDTO.mock(movieId, movieName, List.of(recommendedMovie));
+
+        TMDBMovie tmdbMovie = MockTMDBMovie.mock(movieId);
+
+        when(tmdbFeignClient.getMovieDetails(movieId, "credits,recommendations", language))
+                .thenReturn(tmdbMovie);
+        when(movieDTOMapper.fromTMDBMovie(tmdbMovie)).thenReturn(movieDTO);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+
+        MovieDTO actualMovieDTO = movieService.getMovieDetails(movieId, language);
+
+        assertNotNull(actualMovieDTO);
+        assertEquals(movieDTO.getName(), actualMovieDTO.getName());
+        assertEquals(genre, actualMovieDTO.getRecommendations().get(0).getGenres().get(0));
+    }
+
+    @Test
+    void getMovieDetailsTest_WhenTMDBThrowAPIException_thenThrowsAPIException() {
+        Integer movieId = 1;
+        String language = "zh-CN";
+        when(tmdbFeignClient.getMovieDetails(movieId, "credits,recommendations", language))
+                .thenThrow(APIException.class);
+
+        assertThrows(APIException.class, () -> movieService.getMovieDetails(movieId, language));
     }
 }

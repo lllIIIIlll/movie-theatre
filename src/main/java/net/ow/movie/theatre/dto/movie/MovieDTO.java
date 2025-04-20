@@ -11,11 +11,11 @@ import net.ow.movie.theatre.dto.person.CrewDTO;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovieDTO extends BaseMovieDTO {
-    private List<CastDTO> casts;
+    private List<CastDTO> cast;
 
     private CrewDTO director;
 
-    private CrewDTO writer;
+    private CrewDTO editor;
 
     private List<BaseMovieDTO> recommendations;
 }
