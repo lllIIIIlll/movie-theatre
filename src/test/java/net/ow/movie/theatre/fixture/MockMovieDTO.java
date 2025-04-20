@@ -1,9 +1,8 @@
 package net.ow.movie.theatre.fixture;
 
+import java.util.List;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
 import net.ow.movie.theatre.dto.movie.MovieDTO;
-
-import java.util.List;
 
 public class MockMovieDTO {
     public static MovieDTO mock(Integer id, String name, List<BaseMovieDTO> recommendations) {
