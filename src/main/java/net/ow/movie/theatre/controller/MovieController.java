@@ -61,6 +61,6 @@ public class MovieController {
     public ResponseEntity<MovieDTO> getMovieById(
             @PathVariable Integer id,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new UnsupportedOperationException();
+        return ResponseEntity.ok(movieService.getMovieDetails(id, language));
     }
 }

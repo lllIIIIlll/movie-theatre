@@ -582,7 +582,7 @@ components:
         - $ref: '#/components/schemas/BaseMovieDTO'
         - type: object
           properties:
-            casts:
+            cast:
               type: array
               description: List of cast members in the movie
               items:
@@ -590,9 +590,9 @@ components:
             director:
               $ref: '#/components/schemas/CrewDTO'
               description: Director of the movie
-            writer:
+            editor:
               $ref: '#/components/schemas/CrewDTO'
-              description: Writer of the movie
+              description: Editor of the movie
             recommendations:
               type: array
               description: List of recommended movies
