@@ -26,8 +26,8 @@ public class SearchController {
                     @Valid
                     @Min(value = 1, message = "Page must be at least 1")
                     @Max(value = 500, message = "Page must be less then 500")
-                    Integer pageNumber,
+                    Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        return ResponseEntity.ok(searchService.search(query, pageNumber, language));
+        return ResponseEntity.ok(searchService.search(query, page, language));
     }
 }
