@@ -23,14 +23,12 @@ paths:
       tags:
         - Search
       summary: Search for movies, TV shows, and people
-      description: |
-        Searches for movies, TV shows, and people based on the provided query string.
-        Results are paginated and can be filtered by language.
+      description: Performs a multi-search across movies, TV shows, and people based on the provided query
       operationId: search
       parameters:
         - name: query
           in: query
-          description: The search query string
+          description: Search query string
           required: true
           schema:
             type: string
@@ -404,10 +402,7 @@ components:
           type: array
           description: List of search results for the current page
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MovieSearchResultDTO'
-              - $ref: '#/components/schemas/TVSearchResultDTO'
-              - $ref: '#/components/schemas/PersonSearchResultDTO'
+            $ref: '#/components/schemas/SearchResultDTO'
         page:
           type: integer
           description: Current page number
@@ -475,82 +470,31 @@ components:
     SearchResultDTO:
       type: object
       description: Base search result DTO
-
-    PersonSearchResultDTO:
-      allOf:
-        - $ref: '#/components/schemas/SearchResultDTO'
-        - type: object
-          xml:
-            name: "PersonSearchResult"
-          properties:
-            id:
-              type: integer
-              description: Person ID
-            mediaType:
-              type: enum
-              enum: [person]
-              description: Type of media (person)
-            name:
-              type: string
-              description: Person's name
-            overview:
-              type: string
-              description: Person's biography
-            posterPath:
-              type: string
-              description: Path to person's profile image
-
-    MovieSearchResultDTO:
-      allOf:
-        - $ref: '#/components/schemas/SearchResultDTO'
-        - type: object
-          properties:
-            id:
-              type: integer
-              description: Movie ID
-            mediaType:
-              type: enum
-              enum: [movie]
-              description: Type of media (movie)
-            name:
-              type: string
-              description: Movie title
-            overview:
-              type: string
-              description: Movie overview/description
-            releaseDate:
-              type: string
-              format: date-time
-              description: Movie release date
-            posterPath:
-              type: string
-              description: Path to movie poster image
-
-    TVSearchResultDTO:
-      allOf:
-        - $ref: '#/components/schemas/SearchResultDTO'
-        - type: object
-          properties:
-            id:
-              type: integer
-              description: TV show ID
-            mediaType:
-              type: enum
-              enum: [tv]
-              description: Type of media (tv)
-            name:
-              type: string
-              description: TV show title
-            overview:
-              type: string
-              description: TV show overview/description
-            releaseDate:
-              type: string
-              format: date-time
-              description: TV show first air date
-            posterPath:
-              type: string
-              description: Path to TV show poster image
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the search result
+        mediaType:
+          type: string
+          description: Type of media (movie, tv, person)
+        name:
+          type: string
+          description: Name/title of the search result
+        overview:
+          type: string
+          description: Overview or summary of the search result
+        releaseDate:
+          type: string
+          format: date-time
+          description: Release date (for movies and TV shows)
+        posterPath:
+          type: string
+          description: Path to the poster image
+        genres:
+          type: array
+          description: List of genres associated with the movie
+          items:
+            $ref: '#/components/schemas/GenreDTO'
 
     BaseMovieDTO:
       type: object

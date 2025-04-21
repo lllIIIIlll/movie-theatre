@@ -1,10 +1,8 @@
 package net.ow.movie.theatre.mapper.search;
 
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
-import net.ow.movie.theatre.dto.search.MovieSearchResultDTO;
-import net.ow.movie.theatre.dto.search.PersonSearchResultDTO;
 import net.ow.movie.theatre.dto.search.SearchResultDTO;
-import net.ow.movie.theatre.dto.search.TVShowSearchResultDTO;
+import net.ow.movie.theatre.mapper.genre.GenreDTOMapper;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.search.TMDBMovieSearchResult;
 import net.ow.movie.tmdb.model.search.TMDBPersonSearchResult;
@@ -18,16 +16,25 @@ import org.mapstruct.*;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {
-            MovieSearchResultDTOMapper.class,
-            TVShowSearchResultDTOMapper.class,
-            PersonSearchResultDTOMapper.class
-        })
+        uses = GenreDTOMapper.class)
 public interface SearchResultDTOMapper {
-    @SubclassMapping(target = MovieSearchResultDTO.class, source = TMDBMovieSearchResult.class)
-    @SubclassMapping(target = TVShowSearchResultDTO.class, source = TMDBTVShowSearchResult.class)
-    @SubclassMapping(target = PersonSearchResultDTO.class, source = TMDBPersonSearchResult.class)
+    @SubclassMapping(target = SearchResultDTO.class, source = TMDBMovieSearchResult.class)
+    @SubclassMapping(target = SearchResultDTO.class, source = TMDBTVShowSearchResult.class)
+    @SubclassMapping(target = SearchResultDTO.class, source = TMDBPersonSearchResult.class)
     SearchResultDTO fromTMDBSearchResult(TMDBSearchResult tmdbSearchResult);
+
+    @Mapping(target = "name", source = "title")
+    @Mapping(target = "genres", source = "genreIds")
+    SearchResultDTO fromTMDBMovieSearchResult(TMDBMovieSearchResult tmdbMovieSearchResult);
+
+    @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "releaseDate", ignore = true)
+    @Mapping(target = "posterPath", source = "profilePath")
+    SearchResultDTO fromTMDBPersonSearchResult(TMDBPersonSearchResult tmdbPersonSearchResult);
+
+    @Mapping(target = "genres", source = "genreIds")
+    @Mapping(target = "releaseDate", source = "firstAirDate")
+    SearchResultDTO fromTMDBTVShowSearchResult(TMDBTVShowSearchResult tmdbtvShowSearchResult);
 
     @Mapping(target = "data", source = "results")
     @Mapping(target = "total", source = "totalResults")
