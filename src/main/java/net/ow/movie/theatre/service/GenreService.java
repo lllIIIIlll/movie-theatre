@@ -17,6 +17,22 @@ public class GenreService {
     private final TMDBFeignClient tmdbFeignClient;
     private final GenreDTOMapper genreDTOMapper;
 
+    public List<GenreDTO> getGenres(String language) {
+        List<GenreDTO> movieGenres = getMovieGenres(language);
+        List<GenreDTO> tvShowGenres = getTVShowGenres(language);
+
+        Set<GenreDTO> genres = new HashSet<>();
+        genres.addAll(movieGenres);
+        genres.addAll(tvShowGenres);
+
+        return new ArrayList<>(genres);
+    }
+
+    public Map<Integer, GenreDTO> getGenresAsMap(String language) {
+        List<GenreDTO> genres = getGenres(language);
+        return convertGenresToMap(genres);
+    }
+
     public List<GenreDTO> getMovieGenres(String language) {
         log.debug("Fetching movie genres from TMDB");
         TMDBGenreList tmdbGenreList = tmdbFeignClient.getMovieGenres(language);
