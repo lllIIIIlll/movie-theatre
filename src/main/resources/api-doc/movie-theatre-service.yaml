@@ -337,7 +337,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedResponseTrendingTVShowDTO'
+                $ref: '#/components/schemas/PaginatedResponseBaseTVShowDTO'
         '400':
           description: Bad request - Invalid parameters
         '401':
@@ -468,13 +468,13 @@ components:
           type: integer
           description: Total number of results across all pages
 
-    PaginatedResponseTrendingTVShowDTO:
+    PaginatedResponseBaseTVShowDTO:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/TrendingTVShowDTO'
+            $ref: '#/components/schemas/BaseTVShowDTO'
         page:
           type: integer
           description: Current page number
