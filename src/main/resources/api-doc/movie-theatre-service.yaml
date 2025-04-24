@@ -393,6 +393,44 @@ paths:
         '500':
           description: Internal server error
 
+  /tv-shows/{id}:
+    get:
+      tags:
+        - TV Shows
+      summary: Get TV show details by ID
+      description: Retrieves detailed information about a specific TV show
+      operationId: getTVShowById
+      parameters:
+        - name: id
+          in: path
+          description: TV show ID
+          required: true
+          schema:
+            type: integer
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TVShowDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '404':
+          description: Not found - TV show with the specified ID does not exist
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     PaginatedResponseSearchResultDTO:
@@ -623,7 +661,6 @@ components:
               format: decimal
               description: Movie rating
 
-
     TrendingTVShowDTO:
       allOf:
         - $ref: '#/components/schemas/TrendingDTO'
@@ -652,7 +689,7 @@ components:
             releaseDate:
               type: string
               format: date-time
-              description: Release date of the TV show
+              description: First air date of the TV show
             overview:
               type: string
               description: Overview or summary of the TV show plot
@@ -660,6 +697,97 @@ components:
               type: number
               format: decimal
               description: TV show rating
+              
+    BaseTVShowDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the TV show
+        mediaType:
+          type: string
+          description: Type of media (tv)
+        posterPath:
+          type: string
+          description: Path to the TV show's poster image
+        backdropPath:
+          type: string
+          description: Path to the TV show's backdrop image
+        name:
+          type: string
+          description: Name/title of the TV show
+        genres:
+          type: array
+          description: List of genres associated with the TV show
+          items:
+            $ref: '#/components/schemas/GenreDTO'
+        releaseDate:
+          type: string
+          format: date-time
+          description: First air date of the TV show
+        overview:
+          type: string
+          description: Overview or summary of the TV show plot
+        rating:
+          type: number
+          format: decimal
+          description: TV show rating
+              
+    TVShowDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseTVShowDTO'
+        - type: object
+          properties:
+            seasons:
+              type: array
+              description: List of seasons in the TV show
+              items:
+                $ref: '#/components/schemas/BaseTVSeasonDTO'
+            cast:
+              type: array
+              description: List of cast members in the TV show
+              items:
+                $ref: '#/components/schemas/CastDTO'
+            director:
+              $ref: '#/components/schemas/CrewDTO'
+              description: Director of the TV show
+            editor:
+              $ref: '#/components/schemas/CrewDTO'
+              description: Editor of the TV show
+            recommendations:
+              type: array
+              description: List of recommended TV shows
+              items:
+                $ref: '#/components/schemas/BaseTVShowDTO'
+                        
+    BaseTVSeasonDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the season
+        name:
+          type: string
+          description: Name/title of the season
+        overview:
+          type: string
+          description: Overview or summary of the season
+        posterPath:
+          type: string
+          description: Path to the season's poster image
+        seasonNumber:
+          type: integer
+          description: Season number
+        episodeCount:
+          type: integer
+          description: Number of episodes in the season
+        releaseDate:
+          type: string
+          format: date-time
+          description: Release date of the season
+        rating:
+          type: integer
+          description: Season rating
     
     TrendingPersonDTO:
       allOf:
