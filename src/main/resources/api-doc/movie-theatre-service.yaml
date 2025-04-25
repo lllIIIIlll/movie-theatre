@@ -596,7 +596,7 @@ components:
         profilePath:
           type: string
           description: Path to the cast member's profile image
-        
+    
     CrewDTO:
       type: object
       properties:
@@ -606,15 +606,31 @@ components:
         name:
           type: string
           description: Name of the crew member
-        job:
-          type: string
-          description: Job title of the crew member
-        department:
-          type: string
-          description: Department the crew member belongs to
         profilePath:
           type: string
           description: Path to the crew member's profile image
+        department:
+          type: string
+          description: Department the crew member belongs to
+        job:
+          type: string
+          description: Job title of the crew member
+
+    CreatorDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the crew member
+        name:
+          type: string
+          description: Name of the crew member
+        profilePath:
+          type: string
+          description: Path to the crew member's profile image
+        department:
+          type: string
+          description: Department the crew member belongs to
 
     GenreDTO:
       type: object
@@ -697,6 +713,36 @@ components:
               type: number
               format: decimal
               description: TV show rating
+
+    TrendingPersonDTO:
+      allOf:
+        - $ref: '#/components/schemas/TrendingDTO'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier of the person
+            mediaType:
+              type: string
+              enum: [person]
+              description: Type of media (person)
+            name:
+              type: string
+              description: Person's name
+            profilePath:
+              type: string
+              description: Path to the person's profile image
+            popularity:
+              type: number
+              format: float
+              description: Person's popularity score
+            knownFor:
+              type: array
+              description: List of media the person is known for
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/BaseMovieDTO'
+                  - $ref: '#/components/schemas/BaseTVShowDTO'
               
     BaseTVShowDTO:
       type: object
@@ -748,12 +794,11 @@ components:
               description: List of cast members in the TV show
               items:
                 $ref: '#/components/schemas/CastDTO'
-            director:
-              $ref: '#/components/schemas/CrewDTO'
-              description: Director of the TV show
-            editor:
-              $ref: '#/components/schemas/CrewDTO'
-              description: Editor of the TV show
+            createdBy:
+              type: array
+              description: List of creators of the TV show
+              items:
+                $ref: '#/components/schemas/CreatorDTO'
             recommendations:
               type: array
               description: List of recommended TV shows
@@ -788,16 +833,4 @@ components:
         rating:
           type: integer
           description: Season rating
-    
-    TrendingPersonDTO:
-      allOf:
-        - $ref: '#/components/schemas/TrendingDTO'
-        - type: object
-          properties:
-            id:
-              type: integer
-              description: Unique identifier of the TV show
-            mediaType:
-              type: string
-              description: Type of media (tv)
       

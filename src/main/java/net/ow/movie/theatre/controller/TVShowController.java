@@ -37,6 +37,6 @@ public class TVShowController {
     public ResponseEntity<TVShowDTO> getTVShowById(
             @PathVariable Integer id,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new UnsupportedOperationException();
+        return ResponseEntity.ok(tvShowService.getTVShowById(id, language));
     }
 }

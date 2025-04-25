@@ -5,6 +5,7 @@ import feign.FeignException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.error.model.TMDBException;
 import net.ow.movie.tmdb.model.error.TMDBError;
 import net.ow.shared.errorutils.model.APIException;
@@ -14,6 +15,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor

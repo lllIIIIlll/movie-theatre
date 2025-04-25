@@ -1,9 +1,11 @@
 package net.ow.movie.theatre.dto.tv;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseTVSeasonDTO {
     private Instant releaseDate;
 
