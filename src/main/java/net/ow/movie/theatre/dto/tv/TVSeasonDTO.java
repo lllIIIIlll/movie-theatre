@@ -1,10 +1,9 @@
 package net.ow.movie.theatre.dto.tv;
 
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.ow.movie.theatre.dto.person.CastDTO;
-
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
