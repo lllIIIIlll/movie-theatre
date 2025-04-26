@@ -63,6 +63,52 @@ paths:
         '500':
           description: Internal server error
 
+  /trending:
+    get:
+      tags:
+        - Trending
+      summary: Get trending content
+      description: Retrieves a paginated list of trending content (movies, TV shows, people) for the specified time window
+      operationId: getTrendingContent
+      parameters:
+        - name: time_window
+          in: query
+          description: Time window for trending content (e.g., day, week)
+          required: true
+          schema:
+            type: string
+            enum: [day, week]
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 500
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseTrendingDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
   /movies/popular:
     get:
       tags:
@@ -237,6 +283,134 @@ paths:
         '500':
           description: Internal server error
 
+  /tv-shows/trending:
+    get:
+      tags:
+        - TV Shows
+      summary: Get trending TV shows
+      description: Retrieves a paginated list of trending TV shows for the specified time window
+      operationId: getTrendingTVShows
+      parameters:
+        - name: time_window
+          in: query
+          description: Time window for trending TV shows (e.g., day, week)
+          required: true
+          schema:
+            type: string
+            enum: [day, week]
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 500
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseBaseTVShowDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+
+  /tv-shows/{id}:
+    get:
+      tags:
+        - TV Shows
+      summary: Get TV show details by ID
+      description: Retrieves detailed information about a specific TV show
+      operationId: getTVShowById
+      parameters:
+        - name: id
+          in: path
+          description: TV show ID
+          required: true
+          schema:
+            type: integer
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TVShowDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '404':
+          description: Not found - TV show with the specified ID does not exist
+        '500':
+          description: Internal server error
+
+  /tv-shows/{tv_show_id}/seasons/{season_number}:
+      get:
+        tags:
+          - TV Shows
+        summary: Get TV season details
+        description: Retrieves detailed information about a specific season of a TV show
+        operationId: getTVSeasonByTVShowIdAndSeasonNumber
+        parameters:
+          - name: tv_show_id
+            in: path
+            description: TV show ID
+            required: true
+            schema:
+              type: integer
+          - name: season_number
+            in: path
+            description: Season number
+            required: true
+            schema:
+              type: integer
+          - name: Accept-Language
+            in: header
+            description: Language code for localized results (e.g., en-US, fr-FR)
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/TVSeasonDTO'
+          '400':
+            description: Bad request - Invalid parameters
+          '401':
+            description: Unauthorized - Authentication is required
+          '403':
+            description: Forbidden - Insufficient permissions to access this resource
+          '404':
+            description: Not found - TV show or season does not exist
+          '500':
+            description: Internal server error
+
   /genres/movie:
     get:
       tags:
@@ -300,136 +474,6 @@ paths:
             description: Forbidden - Insufficient permissions to access this resource
           '500':
             description: Internal server error
-
-  /tv-shows/trending:
-    get:
-      tags:
-        - TV Shows
-      summary: Get trending TV shows
-      description: Retrieves a paginated list of trending TV shows for the specified time window
-      operationId: getTrendingTVShows
-      parameters:
-        - name: time_window
-          in: query
-          description: Time window for trending TV shows (e.g., day, week)
-          required: true
-          schema:
-            type: string
-            enum: [day, week]
-        - name: page
-          in: query
-          description: Page number for paginated results
-          required: false
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-            maximum: 500
-        - name: Accept-Language
-          in: header
-          description: Language code for localized results (e.g., en-US, fr-FR)
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedResponseBaseTVShowDTO'
-        '400':
-          description: Bad request - Invalid parameters
-        '401':
-          description: Unauthorized - Authentication is required
-        '403':
-          description: Forbidden - Insufficient permissions to access this resource
-        '500':
-          description: Internal server error
-
-  /trending:
-    get:
-      tags:
-        - Trending
-      summary: Get trending content
-      description: Retrieves a paginated list of trending content (movies, TV shows, people) for the specified time window
-      operationId: getTrendingContent
-      parameters:
-        - name: time_window
-          in: query
-          description: Time window for trending content (e.g., day, week)
-          required: true
-          schema:
-            type: string
-            enum: [day, week]
-        - name: page
-          in: query
-          description: Page number for paginated results
-          required: false
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-            maximum: 500
-        - name: Accept-Language
-          in: header
-          description: Language code for localized results (e.g., en-US, fr-FR)
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedResponseTrendingDTO'
-        '400':
-          description: Bad request - Invalid parameters
-        '401':
-          description: Unauthorized - Authentication is required
-        '403':
-          description: Forbidden - Insufficient permissions to access this resource
-        '500':
-          description: Internal server error
-
-  /tv-shows/{id}:
-    get:
-      tags:
-        - TV Shows
-      summary: Get TV show details by ID
-      description: Retrieves detailed information about a specific TV show
-      operationId: getTVShowById
-      parameters:
-        - name: id
-          in: path
-          description: TV show ID
-          required: true
-          schema:
-            type: integer
-        - name: Accept-Language
-          in: header
-          description: Language code for localized results (e.g., en-US, fr-FR)
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TVShowDTO'
-        '400':
-          description: Bad request - Invalid parameters
-        '401':
-          description: Unauthorized - Authentication is required
-        '403':
-          description: Forbidden - Insufficient permissions to access this resource
-        '404':
-          description: Not found - TV show with the specified ID does not exist
-        '500':
-          description: Internal server error
 
 components:
   schemas:
@@ -833,4 +877,49 @@ components:
         rating:
           type: integer
           description: Season rating
-      
+
+    TVSeasonDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseTVSeasonDTO'
+        - type: object
+          properties:
+            episodes:
+              type: array
+              description: List of episodes in the season
+              items:
+                $ref: '#/components/schemas/TVBaseEpisode'
+            cast:
+              type: array
+              description: List of cast members in the season
+              items:
+                $ref: '#/components/schemas/CastDTO'
+                
+    TVBaseEpisode:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the episode
+        name:
+          type: string
+          description: Name/title of the episode
+        overview:
+          type: string
+          description: Overview or summary of the episode
+        airDate:
+          type: string
+          format: date-time
+          description: Air date of the episode
+        episodeNumber:
+          type: integer
+          description: Episode number within the season
+        seasonNumber:
+          type: integer
+          description: Season number the episode belongs to
+        posterPath:
+          type: string
+          description: Path to the episode's poster image
+        rating:
+          type: number
+          format: decimal
+          description: Episode rating
