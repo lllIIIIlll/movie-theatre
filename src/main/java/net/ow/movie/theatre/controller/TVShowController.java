@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
+import net.ow.movie.theatre.dto.tv.TVSeasonDTO;
 import net.ow.movie.theatre.dto.tv.TVShowDTO;
 import net.ow.movie.theatre.service.TVShowService;
 import org.springframework.http.HttpHeaders;
@@ -38,5 +39,13 @@ public class TVShowController {
             @PathVariable Integer id,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
         return ResponseEntity.ok(tvShowService.getTVShowById(id, language));
+    }
+
+    @GetMapping("/{tv_show_id}/seasons/{season_number}")
+    public ResponseEntity<TVSeasonDTO> getTVSeasonByTVShowIdAndSeasonNumber(
+            @PathVariable("tv_show_id") Integer tvShowId,
+            @PathVariable("season_number") Integer seasonNumber,
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
+        throw new UnsupportedOperationException();
     }
 }
