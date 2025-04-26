@@ -5,6 +5,7 @@ import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
 import net.ow.movie.theatre.mapper.genre.GenreDTOMapper;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
+import net.ow.movie.tmdb.model.tv.TMDBBaseTVShow;
 import org.mapstruct.*;
 
 @Mapper(
@@ -19,6 +20,11 @@ public interface BaseTVShowDTOMapper {
     @Mapping(target = "genres", source = "genreIds")
     @Mapping(target = "rating", source = "voteAverage")
     BaseTVShowDTO fromTMDBTrendingTVShow(TMDBTrendingTVShow tmdbTrendingTVShow);
+
+    @Mapping(target = "releaseDate", source = "firstAirDate")
+    @Mapping(target = "genres", source = "genreIds")
+    @Mapping(target = "rating", source = "voteAverage")
+    BaseTVShowDTO fromTMDBBaseTVShow(TMDBBaseTVShow tmdbBaseTVShow);
 
     @Mapping(target = "data", source = "results")
     @Mapping(target = "total", source = "totalResults")

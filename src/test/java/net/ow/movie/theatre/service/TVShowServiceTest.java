@@ -4,17 +4,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import feign.FeignException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
+import net.ow.movie.theatre.dto.tv.TVShowDTO;
 import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.tv.BaseTVShowDTOMapper;
+import net.ow.movie.theatre.mapper.tv.TVShowDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
+import net.ow.movie.tmdb.model.tv.TMDBTVShow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +32,8 @@ class TVShowServiceTest {
     @Mock private TMDBFeignClient tmdbFeignClient;
 
     @Mock private BaseTVShowDTOMapper baseTVShowDTOMapper;
+
+    @Mock private TVShowDTOMapper tvShowDTOMapper;
 
     @Mock private GenreService genreService;
 
@@ -117,5 +123,118 @@ class TVShowServiceTest {
         assertEquals(1, actualResponse.getPage());
         assertEquals(1, actualResponse.getTotalPages());
         assertEquals(0, actualResponse.getTotal());
+    }
+
+    @Test
+    void getTVShowByIdTest_OK() {
+        Integer tvShowId = 1;
+        String recommendedTvShowName = "recommended-tv-show-name";
+        String tvShowName = "tv-show-name";
+        String language = "zh-CN";
+        String appendToResponse = "credits,recommendations";
+
+        Integer genreId = 1;
+        String genreName = "genre-name";
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
+        Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
+
+        BaseTVShowDTO recommendedTVShow =
+                MockBaseTVShowDTO.mock(
+                        tvShowId, recommendedTvShowName, List.of(MockGenreDTO.mock(genreId, null)));
+        TVShowDTO tvShow =
+                MockTVShowDTO.mock(
+                        tvShowId,
+                        tvShowName,
+                        List.of(MockGenreDTO.mock(genreId, null)),
+                        List.of(recommendedTVShow));
+
+        TMDBTVShow tmdbTVShow = MockTMDBTVShow.mock(tvShowId);
+
+        when(tmdbFeignClient.getTVShowDetails(tvShowId, appendToResponse, language))
+                .thenReturn(tmdbTVShow);
+        when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
+        when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+
+        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+
+        assertNotNull(actualTVShow);
+        assertEquals(1, actualTVShow.getRecommendations().size());
+        assertEquals(genre, actualTVShow.getRecommendations().get(0).getGenres().get(0));
+    }
+
+    @Test
+    void getTVShowByIdTest_whenNoRecommendations_thenReturnsTVShowDTO() {
+        Integer tvShowId = 1;
+        String tvShowName = "tv-show-name";
+        String language = "zh-CN";
+        String appendToResponse = "credits,recommendations";
+
+        Integer genreId = 1;
+        String genreName = "genre-name";
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
+        Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
+
+        TVShowDTO tvShow =
+                MockTVShowDTO.mock(
+                        tvShowId,
+                        tvShowName,
+                        List.of(MockGenreDTO.mock(genreId, null)),
+                        Collections.emptyList());
+
+        TMDBTVShow tmdbTVShow = MockTMDBTVShow.mock(tvShowId);
+
+        when(tmdbFeignClient.getTVShowDetails(tvShowId, appendToResponse, language))
+                .thenReturn(tmdbTVShow);
+        when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
+        when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+
+        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+
+        assertNotNull(actualTVShow);
+        assertTrue(actualTVShow.getRecommendations().isEmpty());
+    }
+
+    @Test
+    void getTVShowByIdTest_whenEmptyGenreMap_thenReturnsTVShowDTO() {
+        Integer tvShowId = 1;
+        String recommendedTvShowName = "recommended-tv-show-name";
+        String tvShowName = "tv-show-name";
+        String language = "zh-CN";
+        String appendToResponse = "credits,recommendations";
+
+        BaseTVShowDTO recommendedTVShow =
+                MockBaseTVShowDTO.mock(
+                        tvShowId, recommendedTvShowName, List.of(MockGenreDTO.mock(1, null)));
+        TVShowDTO tvShow =
+                MockTVShowDTO.mock(
+                        tvShowId,
+                        tvShowName,
+                        List.of(MockGenreDTO.mock(1, null)),
+                        List.of(recommendedTVShow));
+
+        TMDBTVShow tmdbTVShow = MockTMDBTVShow.mock(tvShowId);
+
+        when(tmdbFeignClient.getTVShowDetails(tvShowId, appendToResponse, language))
+                .thenReturn(tmdbTVShow);
+        when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
+        when(genreService.getTVShowGenresAsMap(language)).thenReturn(Collections.emptyMap());
+
+        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+
+        assertNotNull(actualTVShow);
+        assertEquals(1, actualTVShow.getRecommendations().size());
+        assertTrue(actualTVShow.getRecommendations().get(0).getGenres().isEmpty());
+    }
+
+    @Test
+    void getTVShowByIdTest_whenInvalidId_thenThrowException() {
+        Integer tvShowId = 1;
+        String language = "zh-CN";
+        String appendToResponse = "credits,recommendations";
+
+        when(tmdbFeignClient.getTVShowDetails(tvShowId, appendToResponse, language))
+                .thenThrow(FeignException.class);
+
+        assertThrows(FeignException.class, () -> tvShowService.getTVShowById(tvShowId, language));
     }
 }
