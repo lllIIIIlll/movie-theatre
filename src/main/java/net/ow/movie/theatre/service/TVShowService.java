@@ -66,7 +66,7 @@ public class TVShowService {
 
         // NOTE: When fetching recommended tv show from TMDB,
         // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
+        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getTVShowGenresAsMap(language);
         tvShow.getRecommendations()
                 .forEach(
                         recommendedTVShow ->
