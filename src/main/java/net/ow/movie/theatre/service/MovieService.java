@@ -35,10 +35,8 @@ public class MovieService {
 
     public PaginatedResponse<BaseMovieDTO> getTrendingMovies(
             String timeWindow, String language, Integer page) {
-        log.debug("Fetching trending movies from tmdb");
         TMDBPaginatedResponse<TMDBTrendingMovie> tmdbPaginatedResponse =
                 tmdbFeignClient.getTrendingMovies(timeWindow, language, page);
-        log.debug("Fetched trending movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse);
@@ -55,10 +53,8 @@ public class MovieService {
 
     public PaginatedResponse<BaseMovieDTO> getNowPlayingMovies(
             String language, Integer page, String region) {
-        log.debug("Fetching now playing movies from tmdb");
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
                 tmdbFeignClient.getNowPlayingMovies(language, page, region);
-        log.debug("Fetched now playing movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
@@ -75,10 +71,8 @@ public class MovieService {
 
     public PaginatedResponse<BaseMovieDTO> getPopularMovies(
             String language, Integer page, String region) {
-        log.debug("Fetching popular movies from tmdb");
         TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
                 tmdbFeignClient.getPopularMovies(language, page, region);
-        log.debug("Fetched popular movies from tmdb");
 
         PaginatedResponse<BaseMovieDTO> paginatedResponse =
                 baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
@@ -94,14 +88,11 @@ public class MovieService {
     }
 
     public MovieDTO getMovieDetails(Integer movieId, String language) {
-        log.debug("Fetching movie details from tmdb");
         StringJoiner stringJoiner = new StringJoiner(",");
         stringJoiner.add(CREDITS);
         stringJoiner.add(RECOMMENDATIONS);
         String appendToResponse = stringJoiner.toString();
-
         TMDBMovie tmdbMovie = tmdbFeignClient.getMovieDetails(movieId, appendToResponse, language);
-        log.debug("Fetched movie details from tmdb");
 
         MovieDTO movie = movieDTOMapper.fromTMDBMovie(tmdbMovie);
 
@@ -118,8 +109,6 @@ public class MovieService {
 
     private void enrichBaseMovieWithGenres(
             BaseMovieDTO baseMovie, Map<Integer, GenreDTO> movieGenresMap) {
-        log.debug("Enriching base movie with genre details.");
-
         List<Integer> genreIds = baseMovie.getGenres().stream().map(GenreDTO::getId).toList();
         List<GenreDTO> genres = genreIds.stream().map(movieGenresMap::get).toList();
         baseMovie.setGenres(genres);

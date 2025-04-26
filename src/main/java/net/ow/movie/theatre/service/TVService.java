@@ -40,10 +40,8 @@ public class TVService {
 
     public PaginatedResponse<BaseTVShowDTO> getTrendingTVShows(
             String timeWindow, Integer page, String language) {
-        log.debug("Fetching trending TV shows from TMDB");
         TMDBPaginatedResponse<TMDBTrendingTVShow> tmdbPaginatedResponse =
                 tmdbFeignClient.getTrendingTVShows(timeWindow, language, page);
-        log.debug("Fetched trending TV shows from TMDB");
 
         PaginatedResponse<BaseTVShowDTO> paginatedResponse =
                 paginatedResponseMapper.fromTMDBPaginatedTrendingTVShows(tmdbPaginatedResponse);

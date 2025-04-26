@@ -26,10 +26,8 @@ public class SearchService {
 
     public PaginatedResponse<SearchResultDTO> search(
             String query, Integer pageNumber, String language) {
-        log.debug("Searching \"{}\" from tmdb", query);
         TMDBPaginatedResponse<TMDBSearchResult> tmdbPaginatedResponse =
                 tmdbFeignClient.search(query, TMDBConstant.INCLUDE_ADULT, language, pageNumber);
-        log.debug("Searched \"{}\" from tmdb", query);
 
         PaginatedResponse<SearchResultDTO> paginatedResponse =
                 searchResultDTOMapper.fromTMDBPaginatedSearchResults(tmdbPaginatedResponse);
@@ -47,8 +45,6 @@ public class SearchService {
 
     private void enrichBaseMovieWithGenres(
             SearchResultDTO searchResult, Map<Integer, GenreDTO> movieGenresMap) {
-        log.debug("Enriching base movie with genre details.");
-
         if (null == searchResult.getGenres()) {
             return;
         }
