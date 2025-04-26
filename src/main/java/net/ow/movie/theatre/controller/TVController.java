@@ -8,7 +8,7 @@ import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
 import net.ow.movie.theatre.dto.tv.TVSeasonDTO;
 import net.ow.movie.theatre.dto.tv.TVShowDTO;
-import net.ow.movie.theatre.service.TVShowService;
+import net.ow.movie.theatre.service.TVService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/tv-shows")
-public class TVShowController {
-    private final TVShowService tvShowService;
+public class TVController {
+    private final TVService tvService;
 
     @GetMapping("/trending")
     public ResponseEntity<PaginatedResponse<BaseTVShowDTO>> getTrendingTVShows(
@@ -31,14 +31,14 @@ public class TVShowController {
                     @Max(value = 500, message = "Page must be less then 500")
                     Integer page,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        return ResponseEntity.ok(tvShowService.getTrendingTVShows(timeWindow, page, language));
+        return ResponseEntity.ok(tvService.getTrendingTVShows(timeWindow, page, language));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TVShowDTO> getTVShowById(
             @PathVariable Integer id,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        return ResponseEntity.ok(tvShowService.getTVShowById(id, language));
+        return ResponseEntity.ok(tvService.getTVShowById(id, language));
     }
 
     @GetMapping("/{tv_show_id}/seasons/{season_number}")
@@ -46,6 +46,7 @@ public class TVShowController {
             @PathVariable("tv_show_id") Integer tvShowId,
             @PathVariable("season_number") Integer seasonNumber,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        throw new UnsupportedOperationException();
+        return ResponseEntity.ok(
+                tvService.getTVSeasonByTVShowIdAndSeasonNumber(tvShowId, seasonNumber, language));
     }
 }

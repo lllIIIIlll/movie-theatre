@@ -49,6 +49,7 @@ public class TMDBExceptionHandler {
                 throw new APIException(TMDBException.SERVICE_UNAVAILABLE);
             }
 
+            log.error(e.getMessage());
             log.error("Failed to execute TMDB request - {}", errorMessage);
             throw new APIException(TMDBException.INTERNAL_SERVER_ERROR, errorMessage);
         }

@@ -5,7 +5,7 @@ import java.time.Instant;
 import lombok.Data;
 
 @Data
-public class TVBaseEpisode {
+public class BaseTVEpisodeDTO {
     private Instant airDate;
 
     private Integer episodeNumber;
