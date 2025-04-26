@@ -1,6 +1,6 @@
 package net.ow.movie.theatre.error.handler;
 
-import com.nimbusds.jose.shaded.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -20,11 +20,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class TMDBExceptionHandler {
-    private static final String NO_RESPONSE_EXCEPTION_MESSAGE = "No response from TMDB.";
+    private static final String NO_RESPONSE_EXCEPTION_MESSAGE = "No response from TMDB";
 
-    private static final String UNKNOWN_EXCEPTION_MESSAGE = "Unknown error from TMDB.";
+    private static final String UNKNOWN_EXCEPTION_MESSAGE = "Unknown error from TMDB";
 
-    private final Gson gson;
+    private final ObjectMapper objectMapper;
 
     @Around("execution(* net.ow.movie.tmdb.feign.TMDBFeignClient.*(..))")
     public Object handleTMDBException(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -32,20 +32,25 @@ public class TMDBExceptionHandler {
             return joinPoint.proceed();
         } catch (FeignException e) {
             int status = e.status();
+            String errorMessage = extractErrorMessage(e);
 
             if (HttpStatus.UNAUTHORIZED.value() == status) {
+                log.error("Unauthorized request to TMDB - {}", errorMessage);
                 throw new APIException(TMDBException.UNAUTHORIZED);
             }
 
             if (HttpStatus.NOT_FOUND.value() == status) {
+                log.error("Resource not found in TMDB - {}", errorMessage);
                 throw new APIException(TMDBException.RESOURCE_NOT_FOUND);
             }
 
             if (HttpStatus.SERVICE_UNAVAILABLE.value() == status) {
+                log.error("TMDB service unavailable.");
                 throw new APIException(TMDBException.SERVICE_UNAVAILABLE);
             }
 
-            throw new APIException(TMDBException.INTERNAL_SERVER_ERROR, extractErrorMessage(e));
+            log.error("Failed to execute TMDB request - {}", errorMessage);
+            throw new APIException(TMDBException.INTERNAL_SERVER_ERROR, errorMessage);
         }
     }
 
@@ -60,7 +65,7 @@ public class TMDBExceptionHandler {
 
         TMDBError error;
         try {
-            error = gson.fromJson(errorStr, TMDBError.class);
+            error = objectMapper.readValue(errorStr, TMDBError.class);
         } catch (Exception ignore) {
             return errorStr;
         }

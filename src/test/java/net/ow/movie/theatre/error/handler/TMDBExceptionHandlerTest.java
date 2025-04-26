@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-import com.nimbusds.jose.shaded.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +29,7 @@ class TMDBExceptionHandlerTest {
 
     @Mock private FeignException feignException;
 
-    @Spy private Gson gson;
+    @Spy private ObjectMapper objectMapper;
 
     @Test
     void handleTMDBExceptionTest_whenNormalExecution_thenReturnsResult() throws Throwable {
@@ -131,13 +131,12 @@ class TMDBExceptionHandlerTest {
         when(feignException.status()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
         when(feignException.responseBody()).thenReturn(Optional.empty());
 
-        // When & Then
         APIException exception =
                 assertThrows(
                         APIException.class,
                         () -> tmdbExceptionHandler.handleTMDBException(joinPoint));
         assertEquals(TMDBException.INTERNAL_SERVER_ERROR, exception.getError());
-        assertEquals("No response from TMDB.", exception.getMessageParams()[0]);
+        assertEquals("No response from TMDB", exception.getMessageParams()[0]);
     }
 
     @Test
