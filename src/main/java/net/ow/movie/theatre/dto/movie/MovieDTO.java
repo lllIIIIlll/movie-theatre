@@ -17,5 +17,9 @@ public class MovieDTO extends BaseMovieDTO {
 
     private CrewDTO editor;
 
+    private String tagline;
+
+    private Integer runtime;
+
     private List<BaseMovieDTO> recommendations;
 }
