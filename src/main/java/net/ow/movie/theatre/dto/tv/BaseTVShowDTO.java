@@ -10,21 +10,21 @@ import net.ow.movie.theatre.dto.genre.GenreDTO;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseTVShowDTO {
-    private Integer id;
+    protected Integer id;
 
-    private String mediaType;
+    protected String mediaType;
 
-    private String posterPath;
+    protected String posterPath;
 
-    private String backdropPath;
+    protected String backdropPath;
 
-    private String name;
+    protected String name;
 
-    private List<GenreDTO> genres;
+    protected List<GenreDTO> genres;
 
-    private Instant releaseDate;
+    protected Instant releaseDate;
 
-    private String overview;
+    protected String overview;
 
-    private BigDecimal rating;
+    protected BigDecimal rating;
 }
