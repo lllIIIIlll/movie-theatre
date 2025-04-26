@@ -1,5 +1,6 @@
 package net.ow.movie.theatre.service;
 
+import static net.ow.movie.theatre.constant.TMDBConstant.CREDITS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -11,13 +12,16 @@ import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
+import net.ow.movie.theatre.dto.tv.TVSeasonDTO;
 import net.ow.movie.theatre.dto.tv.TVShowDTO;
 import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.tv.BaseTVShowDTOMapper;
+import net.ow.movie.theatre.mapper.tv.TVSeasonDTOMapper;
 import net.ow.movie.theatre.mapper.tv.TVShowDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
+import net.ow.movie.tmdb.model.tv.TMDBTVSeason;
 import net.ow.movie.tmdb.model.tv.TMDBTVShow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +30,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TVShowServiceTest {
-    @InjectMocks private TVShowService tvShowService;
+class TVServiceTest {
+    @InjectMocks private TVService tvService;
 
     @Mock private TMDBFeignClient tmdbFeignClient;
 
@@ -36,6 +40,8 @@ class TVShowServiceTest {
     @Mock private TVShowDTOMapper tvShowDTOMapper;
 
     @Mock private GenreService genreService;
+
+    @Mock private TVSeasonDTOMapper tvSeasonDTOMapper;
 
     @Test
     void getTrendingTVShowsTest_OK() {
@@ -68,7 +74,7 @@ class TVShowServiceTest {
         when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
         PaginatedResponse<BaseTVShowDTO> actualResponse =
-                tvShowService.getTrendingTVShows(timeWindow, page, language);
+                tvService.getTrendingTVShows(timeWindow, page, language);
 
         assertNotNull(actualResponse);
 
@@ -91,7 +97,7 @@ class TVShowServiceTest {
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<BaseTVShowDTO> actualResponse =
-                tvShowService.getTrendingTVShows(timeWindow, page, language);
+                tvService.getTrendingTVShows(timeWindow, page, language);
 
         assertTrue(actualResponse.getData().isEmpty());
         assertEquals(1, actualResponse.getPage());
@@ -117,7 +123,7 @@ class TVShowServiceTest {
                 .thenReturn(expectedPaginatedResponse);
 
         PaginatedResponse<BaseTVShowDTO> actualResponse =
-                tvShowService.getTrendingTVShows(timeWindow, page, language);
+                tvService.getTrendingTVShows(timeWindow, page, language);
 
         assertTrue(actualResponse.getData().isEmpty());
         assertEquals(1, actualResponse.getPage());
@@ -155,7 +161,7 @@ class TVShowServiceTest {
         when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
         when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
-        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+        TVShowDTO actualTVShow = tvService.getTVShowById(tvShowId, language);
 
         assertNotNull(actualTVShow);
         assertEquals(1, actualTVShow.getRecommendations().size());
@@ -188,7 +194,7 @@ class TVShowServiceTest {
         when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
         when(genreService.getTVShowGenresAsMap(language)).thenReturn(genreIdToGenreMap);
 
-        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+        TVShowDTO actualTVShow = tvService.getTVShowById(tvShowId, language);
 
         assertNotNull(actualTVShow);
         assertTrue(actualTVShow.getRecommendations().isEmpty());
@@ -219,7 +225,7 @@ class TVShowServiceTest {
         when(tvShowDTOMapper.fromTMDBTVShow(tmdbTVShow)).thenReturn(tvShow);
         when(genreService.getTVShowGenresAsMap(language)).thenReturn(Collections.emptyMap());
 
-        TVShowDTO actualTVShow = tvShowService.getTVShowById(tvShowId, language);
+        TVShowDTO actualTVShow = tvService.getTVShowById(tvShowId, language);
 
         assertNotNull(actualTVShow);
         assertEquals(1, actualTVShow.getRecommendations().size());
@@ -235,6 +241,60 @@ class TVShowServiceTest {
         when(tmdbFeignClient.getTVShowDetails(tvShowId, appendToResponse, language))
                 .thenThrow(FeignException.class);
 
-        assertThrows(FeignException.class, () -> tvShowService.getTVShowById(tvShowId, language));
+        assertThrows(FeignException.class, () -> tvService.getTVShowById(tvShowId, language));
+    }
+
+    @Test
+    void getTVSeasonByTVShowIdAndSeasonNumberTest_OK() {
+        Integer tvShowId = 1;
+        Integer id = 1;
+        String name = "tv-season-name";
+        Integer seasonNumber = 1;
+        String language = "zh-CN";
+
+        TMDBTVSeason mockTMDBTVSeason = MockTMDBTVSeason.mock(id, name);
+        TVSeasonDTO expectedTVSeasonDTO = MockTVSeasonDTO.mock(id, name);
+
+        when(tmdbFeignClient.getTVSeasonDetails(tvShowId, seasonNumber, CREDITS, language))
+                .thenReturn(mockTMDBTVSeason);
+        when(tvSeasonDTOMapper.fromTMDBTVSeason(mockTMDBTVSeason)).thenReturn(expectedTVSeasonDTO);
+
+        TVSeasonDTO actualTVSeasonDTO =
+                tvService.getTVSeasonByTVShowIdAndSeasonNumber(tvShowId, seasonNumber, language);
+
+        assertNotNull(actualTVSeasonDTO);
+        assertEquals(expectedTVSeasonDTO, actualTVSeasonDTO);
+    }
+
+    @Test
+    void getTVSeasonByTVShowIdAndSeasonNumberTest_whenNullResponse_thenReturnsNull() {
+        Integer tvShowId = 1;
+        Integer seasonNumber = 1;
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getTVSeasonDetails(tvShowId, seasonNumber, CREDITS, language))
+                .thenReturn(null);
+
+        TVSeasonDTO actualTVSeasonDTO =
+                tvService.getTVSeasonByTVShowIdAndSeasonNumber(tvShowId, seasonNumber, language);
+
+        assertNull(actualTVSeasonDTO);
+    }
+
+    @Test
+    void
+            getTVSeasonByTVShowIdAndSeasonNumberTest_whenThrowFeignException_thenThrowsFeignException() {
+        Integer tvShowId = 1;
+        Integer seasonNumber = 1;
+        String language = "zh-CN";
+
+        when(tmdbFeignClient.getTVSeasonDetails(tvShowId, seasonNumber, CREDITS, language))
+                .thenThrow(FeignException.class);
+
+        assertThrows(
+                FeignException.class,
+                () ->
+                        tvService.getTVSeasonByTVShowIdAndSeasonNumber(
+                                tvShowId, seasonNumber, language));
     }
 }

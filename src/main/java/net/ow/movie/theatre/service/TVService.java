@@ -12,19 +12,22 @@ import lombok.extern.slf4j.Slf4j;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.dto.tv.BaseTVShowDTO;
+import net.ow.movie.theatre.dto.tv.TVSeasonDTO;
 import net.ow.movie.theatre.dto.tv.TVShowDTO;
 import net.ow.movie.theatre.mapper.tv.BaseTVShowDTOMapper;
+import net.ow.movie.theatre.mapper.tv.TVSeasonDTOMapper;
 import net.ow.movie.theatre.mapper.tv.TVShowDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingTVShow;
+import net.ow.movie.tmdb.model.tv.TMDBTVSeason;
 import net.ow.movie.tmdb.model.tv.TMDBTVShow;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TVShowService {
+public class TVService {
     private final TMDBFeignClient tmdbFeignClient;
 
     private final GenreService genreService;
@@ -32,6 +35,8 @@ public class TVShowService {
     private final BaseTVShowDTOMapper paginatedResponseMapper;
 
     private final TVShowDTOMapper tvShowDTOMapper;
+
+    private final TVSeasonDTOMapper tvSeasonDTOMapper;
 
     public PaginatedResponse<BaseTVShowDTO> getTrendingTVShows(
             String timeWindow, Integer page, String language) {
@@ -73,6 +78,14 @@ public class TVShowService {
                                 enrichBaseTVShowWithGenres(recommendedTVShow, genreIdToGenreMap));
 
         return tvShow;
+    }
+
+    public TVSeasonDTO getTVSeasonByTVShowIdAndSeasonNumber(
+            Integer tvShowId, Integer seasonNumber, String language) {
+        TMDBTVSeason tmdbtvSeason =
+                tmdbFeignClient.getTVSeasonDetails(tvShowId, seasonNumber, CREDITS, language);
+
+        return tvSeasonDTOMapper.fromTMDBTVSeason(tmdbtvSeason);
     }
 
     private void enrichBaseTVShowWithGenres(

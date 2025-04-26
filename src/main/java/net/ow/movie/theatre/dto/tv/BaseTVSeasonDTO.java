@@ -7,19 +7,19 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseTVSeasonDTO {
-    private Instant releaseDate;
+    protected Instant releaseDate;
 
-    private Integer episodeCount;
+    protected Integer episodeCount;
 
-    private Integer id;
+    protected Integer id;
 
-    private String name;
+    protected String name;
 
-    private String overview;
+    protected String overview;
 
-    private String posterPath;
+    protected String posterPath;
 
-    private Integer seasonNumber;
+    protected Integer seasonNumber;
 
-    private Integer rating;
+    protected Integer rating;
 }
