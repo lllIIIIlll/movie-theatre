@@ -28,10 +28,8 @@ public class TrendingService {
 
     public PaginatedResponse<TrendingDTO> getTrendingContent(
             String timeWindow, Integer page, String language) {
-        log.debug("Fetching trending content from TMDB.");
         TMDBPaginatedResponse<TMDBTrending> tmdbPaginatedResponse =
                 tmdbFeignClient.getTrending(timeWindow, language, page);
-        log.debug("Fetched trending content from TMDB.");
 
         PaginatedResponse<TrendingDTO> paginatedResponse =
                 trendingDTOMapper.fromTMDBPaginatedTrending(tmdbPaginatedResponse);
@@ -49,8 +47,6 @@ public class TrendingService {
             PaginatedResponse<TrendingDTO> paginatedResponse,
             Map<Integer, GenreDTO> movieGenresMap,
             Map<Integer, GenreDTO> tvShowGenresMap) {
-        log.debug("Enriching trending content with genre details.");
-
         paginatedResponse
                 .getData()
                 .forEach(
