@@ -16,7 +16,6 @@ import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.theatre.mapper.movie.MovieDTOMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
-import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import net.ow.movie.tmdb.model.movie.TMDBMovie;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
 import org.springframework.stereotype.Service;
@@ -42,24 +41,6 @@ public class MovieService {
                 baseMovieDTOMapper.fromTMDBPaginatedTrendingMovies(tmdbPaginatedResponse);
 
         // NOTE: When fetching trending movies from TMDB,
-        // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
-        paginatedResponse
-                .getData()
-                .forEach(movie -> enrichBaseMovieWithGenres(movie, genreIdToGenreMap));
-
-        return paginatedResponse;
-    }
-
-    public PaginatedResponse<BaseMovieDTO> getNowPlayingMovies(
-            String language, Integer page, String region) {
-        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
-                tmdbFeignClient.getNowPlayingMovies(language, page, region);
-
-        PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
-
-        // NOTE: When fetching now playing movies from TMDB,
         // only ids are included in the response for genres.
         Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
         paginatedResponse
