@@ -21,18 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
     private final MovieService movieService;
 
-    @GetMapping("/popular")
-    public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getPopularMovies(
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false, defaultValue = "1")
-                    @Valid
-                    @Min(value = 1, message = "Page must be at least 1")
-                    @Max(value = 500, message = "Page must be less then 500")
-                    Integer page,
-            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
-        return ResponseEntity.ok(movieService.getPopularMovies(language, page, region));
-    }
-
     @GetMapping("/now-playing")
     public ResponseEntity<PaginatedResponse<BaseMovieDTO>> getNowPlayingMovies(
             @RequestParam(required = false) String region,

@@ -69,24 +69,6 @@ public class MovieService {
         return paginatedResponse;
     }
 
-    public PaginatedResponse<BaseMovieDTO> getPopularMovies(
-            String language, Integer page, String region) {
-        TMDBPaginatedResponse<TMDBBaseMovie> tmdbPaginatedResponse =
-                tmdbFeignClient.getPopularMovies(language, page, region);
-
-        PaginatedResponse<BaseMovieDTO> paginatedResponse =
-                baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbPaginatedResponse);
-
-        // NOTE: When fetching popular movies from TMDB,
-        // only ids are included in the response for genres.
-        Map<Integer, GenreDTO> genreIdToGenreMap = genreService.getMovieGenresAsMap(language);
-        paginatedResponse
-                .getData()
-                .forEach(movie -> enrichBaseMovieWithGenres(movie, genreIdToGenreMap));
-
-        return paginatedResponse;
-    }
-
     public MovieDTO getMovieDetails(Integer movieId, String language) {
         StringJoiner stringJoiner = new StringJoiner(",");
         stringJoiner.add(CREDITS);
