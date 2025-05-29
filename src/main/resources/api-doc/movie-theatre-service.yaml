@@ -155,6 +155,51 @@ paths:
         '500':
           description: Internal server error
 
+  /movies/discover:
+    get:
+      tags:
+        - Movies
+      summary: Discover movies
+      description: Discover movies based on various filters and criteria
+      operationId: discoverMovies
+      parameters:
+        - name: discoverMovieRequest
+          in: query
+          description: Discovery request parameters
+          required: true
+          schema:
+            $ref: '#/components/schemas/DiscoverMovieRequest'
+        - name: page
+          in: query
+          description: Page number for paginated results
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 500
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponseBaseMovieDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '501':
+          description: Not implemented yet
+
   /movies/{id}:
     get:
       tags:
@@ -833,3 +878,28 @@ components:
           type: number
           format: decimal
           description: Episode rating
+
+    DiscoverMovieRequest:
+      type: object
+      description: Request parameters for discovering movies
+      properties:
+        primaryReleaseYear:
+          type: integer
+          description: Filter movies by their primary release year
+        primaryReleaseDateLessThen:
+          type: string
+          format: date-time
+          description: Filter movies released before this date
+        region:
+          type: string
+          description: Filter movies by region code (e.g., US, FR)
+        withOriginalLanguage:
+          type: string
+          description: Filter movies by their original language
+        withGenres:
+          type: string
+          description: Comma-separated list of genre IDs to include
+        withoutGenres:
+          type: string
+          description: Comma-separated list of genre IDs to exclude
+      additionalProperties: false
