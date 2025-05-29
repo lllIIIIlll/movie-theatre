@@ -5,9 +5,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
+import net.ow.movie.theatre.dto.movie.DiscoverMovieRequest;
 import net.ow.movie.theatre.dto.movie.MovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.service.MovieService;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -38,5 +40,17 @@ public class MovieController {
             @PathVariable Integer id,
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
         return ResponseEntity.ok(movieService.getMovieDetails(id, language));
+    }
+
+    @GetMapping("/discover")
+    public ResponseEntity<PaginatedResponse<BaseMovieDTO>> discoverMovies(
+            @SpringQueryMap DiscoverMovieRequest discoverMovieRequest,
+            @RequestParam(required = false, defaultValue = "1")
+                    @Valid
+                    @Min(value = 1, message = "Page must be at least 1")
+                    @Max(value = 500, message = "Page must be less then 500")
+                    Integer page,
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE) String language) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
