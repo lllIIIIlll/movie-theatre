@@ -3,18 +3,23 @@ package net.ow.movie.theatre.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import net.ow.movie.theatre.dto.genre.GenreDTO;
 import net.ow.movie.theatre.dto.movie.BaseMovieDTO;
+import net.ow.movie.theatre.dto.movie.DiscoverMovieRequest;
 import net.ow.movie.theatre.dto.movie.MovieDTO;
 import net.ow.movie.theatre.dto.pagination.PaginatedResponse;
 import net.ow.movie.theatre.fixture.*;
 import net.ow.movie.theatre.mapper.movie.BaseMovieDTOMapper;
 import net.ow.movie.theatre.mapper.movie.MovieDTOMapper;
+import net.ow.movie.theatre.mapper.movie.TMDBDiscoverMovieRequestMapper;
 import net.ow.movie.tmdb.feign.TMDBFeignClient;
 import net.ow.movie.tmdb.model.common.TMDBPaginatedResponse;
+import net.ow.movie.tmdb.model.discover.TMDBDiscoverMovieRequest;
+import net.ow.movie.tmdb.model.movie.TMDBBaseMovie;
 import net.ow.movie.tmdb.model.movie.TMDBMovie;
 import net.ow.movie.tmdb.model.trending.TMDBTrendingMovie;
 import net.ow.shared.errorutils.model.APIException;
@@ -33,6 +38,8 @@ class MovieServiceTest {
     @Mock private BaseMovieDTOMapper baseMovieDTOMapper;
 
     @Mock private MovieDTOMapper movieDTOMapper;
+
+    @Mock private TMDBDiscoverMovieRequestMapper tmdbDiscoverMovieRequestMapper;
 
     @Mock private GenreService genreService;
 
@@ -167,5 +174,84 @@ class MovieServiceTest {
                 .thenThrow(APIException.class);
 
         assertThrows(APIException.class, () -> movieService.getMovieDetails(movieId, language));
+    }
+
+    @Test
+    void discoverMoviesTest_OK() {
+        Integer page = 1;
+        String language = "en-US";
+        Integer primaryReleaseYear = 2023;
+        Instant primaryReleaseDateLessThen = Instant.now();
+
+        Integer movieId = 1;
+        String movieName = "movie-name";
+
+        Integer genreId = 1;
+        String genreName = "genre-name";
+
+        DiscoverMovieRequest request =
+                MockDiscoverMovieRequest.mock(primaryReleaseYear, primaryReleaseDateLessThen);
+        TMDBDiscoverMovieRequest tmdbRequest =
+                MockTMDBDiscoverMovieRequest.mock(
+                        primaryReleaseYear, primaryReleaseDateLessThen, page, language);
+
+        TMDBBaseMovie tmdbBaseMovie = MockTMDBBaseMovie.mock(1);
+        TMDBPaginatedResponse<TMDBBaseMovie> tmdbResponse =
+                MockTMDBPaginatedResponse.mockTMDBPaginatedBaseMovie(List.of(tmdbBaseMovie));
+
+        GenreDTO genre = MockGenreDTO.mock(genreId, genreName);
+        Map<Integer, GenreDTO> genreIdToGenreMap = Collections.singletonMap(genreId, genre);
+
+        BaseMovieDTO baseMovie =
+                MockBaseMovieDTO.mock(movieId, movieName, List.of(MockGenreDTO.mock(genreId)));
+        PaginatedResponse<BaseMovieDTO> serviceResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(List.of(baseMovie));
+
+        when(tmdbDiscoverMovieRequestMapper.fromDiscoverMovieRequest(request, language, page))
+                .thenReturn(tmdbRequest);
+        when(tmdbFeignClient.discoverMovies(tmdbRequest)).thenReturn(tmdbResponse);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(tmdbResponse))
+                .thenReturn(serviceResponse);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(genreIdToGenreMap);
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.discoverMovies(request, language, page);
+
+        assertTrue(tmdbRequest.getIncludeAdult());
+        assertFalse(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(genre, baseMovie.getGenres().get(0));
+    }
+
+    @Test
+    void discoverMoviesTest_WhenNullTMDBResponse_thenReturnsEmptyPaginatedResponse() {
+        Integer page = 1;
+        String language = "en-US";
+        Integer primaryReleaseYear = 2023;
+        Instant primaryReleaseDateLessThen = Instant.now();
+
+        DiscoverMovieRequest request =
+                MockDiscoverMovieRequest.mock(primaryReleaseYear, primaryReleaseDateLessThen);
+        TMDBDiscoverMovieRequest tmdbRequest =
+                MockTMDBDiscoverMovieRequest.mock(
+                        primaryReleaseYear, primaryReleaseDateLessThen, page, language);
+
+        PaginatedResponse<BaseMovieDTO> serviceResponse =
+                MockPaginatedResponse.mockPaginatedBaseMovieDTO(Collections.emptyList());
+
+        when(tmdbDiscoverMovieRequestMapper.fromDiscoverMovieRequest(request, language, page))
+                .thenReturn(tmdbRequest);
+        when(tmdbFeignClient.discoverMovies(tmdbRequest)).thenReturn(null);
+        when(baseMovieDTOMapper.fromTMDBPaginatedBaseMovies(null)).thenReturn(serviceResponse);
+        when(genreService.getMovieGenresAsMap(language)).thenReturn(Collections.emptyMap());
+
+        PaginatedResponse<BaseMovieDTO> actualResponse =
+                movieService.discoverMovies(request, language, page);
+
+        assertTrue(tmdbRequest.getIncludeAdult());
+        assertTrue(actualResponse.getData().isEmpty());
+        assertEquals(1, actualResponse.getPage());
+        assertEquals(1, actualResponse.getTotalPages());
+        assertEquals(0, actualResponse.getTotal());
     }
 }
