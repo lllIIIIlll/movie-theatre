@@ -252,6 +252,7 @@
                             <exclude>**/dto/**/*</exclude>
                             <exclude>**/model/**/*</exclude>
                             <exclude>**/mapper/search/*</exclude>
+                            <exclude>**/mapper/country/*</exclude>
                             <exclude>**/mapper/movie/*</exclude>
                             <exclude>**/mapper/tv/*</exclude>
                             <exclude>**/mapper/trending/*</exclude>
