@@ -1,10 +1,9 @@
 package net.ow.movie.theatre.mapper.country;
 
+import java.util.List;
 import net.ow.movie.theatre.dto.country.CountryDTO;
 import net.ow.movie.tmdb.model.country.TMDBCountry;
 import org.mapstruct.*;
-
-import java.util.List;
 
 @Mapper(
         componentModel = "spring",
@@ -17,5 +16,5 @@ public interface CountryDTOMapper {
     @Mapping(target = "name", source = "nativeName")
     CountryDTO fromTMDBCountry(TMDBCountry tmdbCountry);
 
-    List<CountryDTO > fromTMDBCountries(List<TMDBCountry> tmdbCountries);
+    List<CountryDTO> fromTMDBCountries(List<TMDBCountry> tmdbCountries);
 }

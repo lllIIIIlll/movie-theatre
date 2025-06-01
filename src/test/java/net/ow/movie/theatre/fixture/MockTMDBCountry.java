@@ -1,6 +1,5 @@
 package net.ow.movie.theatre.fixture;
 
-import net.ow.movie.theatre.dto.country.CountryDTO;
 import net.ow.movie.tmdb.model.country.TMDBCountry;
 
 public class MockTMDBCountry {
