@@ -16,6 +16,8 @@ tags:
     description: Operations related to trending content across all media types
   - name: Search
     description: Search operations across movies, TV shows, and people
+  - name: Configuration
+    description: Operations related to configuration settings
 
 paths:
   /search:
@@ -428,6 +430,40 @@ paths:
             description: Forbidden - Insufficient permissions to access this resource
           '500':
             description: Internal server error
+
+  /configuration/countries:
+    get:
+      tags:
+        - Configuration
+      summary: Get list of countries
+      description: Retrieves a list of all available countries with their ISO codes and names
+      operationId: getCountries
+      parameters:
+        - name: Accept-Language
+          in: header
+          description: Language code for localized results (e.g., en-US, fr-FR)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryDTO'
+        '400':
+          description: Bad request - Invalid parameters
+        '401':
+          description: Unauthorized - Authentication is required
+        '403':
+          description: Forbidden - Insufficient permissions to access this resource
+        '500':
+          description: Internal server error
+        '501':
+          description: Not implemented yet
 
 components:
   schemas:
@@ -904,4 +940,14 @@ components:
         sortBy:
           type: string
           description: Field to sort the results by
-      additionalProperties: false
+
+    CountryDTO:
+      type: object
+      description: Country information DTO
+      properties:
+        iosCode:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+        name:
+          type: string
+          description: Localized country name
