@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CountryServiceTest {
+class CountryServiceTest {
     @InjectMocks private CountryService countryService;
 
     @Mock private TMDBFeignClient tmdbFeignClient;
