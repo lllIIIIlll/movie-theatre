@@ -3,21 +3,31 @@ info:
   title: Movie Theatre Service
   version: 1.0.0
   description: |
-    This microservice is designed to retrieve movie information from TMDB (The Movie Database) and download related resources from the internet. It provides a comprehensive API for querying, filtering, and managing movie data, supporting efficient content retrieval and resource acquisition.
+    This microservice provides comprehensive movie and TV show information from TMDB (The Movie Database).
+    It offers efficient content retrieval, search capabilities, and trending content across all media types.
+    
+    ## Features
+    - **Movie Information**: Detailed movie data including cast, crew, and recommendations
+    - **TV Show Information**: Complete TV show details with seasons and episodes
+    - **Search Functionality**: Multi-search across movies, TV shows, and people
+    - **Trending Content**: Discover what's trending in entertainment
+    - **Configuration Management**: Access to genres, countries, and system configuration
+    - **Multi-language Support**: Localized content based on Accept-Language header
+    
+    ## Authentication
+    Currently, this API does not require authentication for public endpoints.
 
 tags:
-  - name: Genres
-    description: Operations related to movie and TV show genres
   - name: Movies
-    description: Operations related to movie information
+    description: Operations related to movie information and discovery
   - name: TV Shows
-    description: Operations related to TV show information
-  - name: Trending
-    description: Operations related to trending content across all media types
+    description: Operations related to TV show information and seasons
   - name: Search
     description: Search operations across movies, TV shows, and people
+  - name: Trending
+    description: Operations related to trending content across all media types
   - name: Configuration
-    description: Operations related to configuration settings
+    description: Operations related to configuration settings, genres, and countries
 
 paths:
   /search:
@@ -25,15 +35,18 @@ paths:
       tags:
         - Search
       summary: Search for movies, TV shows, and people
-      description: Performs a multi-search across movies, TV shows, and people based on the provided query
+      description: |
+        Performs a comprehensive multi-search across movies, TV shows, and people based on the provided query.
+        Returns paginated results with mixed content types that can be filtered and sorted.
       operationId: search
       parameters:
         - name: query
           in: query
-          description: Search query string
+          description: Search query string (minimum 1 character)
           required: true
           schema:
             type: string
+          example: "avengers"
         - name: page
           in: query
           description: Page number for paginated results
@@ -43,12 +56,24 @@ paths:
             default: 1
             minimum: 1
             maximum: 500
+          example: 1
         - name: Accept-Language
           in: header
-          description: Language code for localized results (e.g., en-US, fr-FR)
+          description: Language code for localized results (ISO 639-1 format)
           required: true
           schema:
             type: string
+            pattern: '^[a-z]{2}(-[A-Z]{2})?$'
+          examples:
+            english:
+              value: "en-US"
+              description: "English (United States)"
+            french:
+              value: "fr-FR"
+              description: "French (France)"
+            spanish:
+              value: "es-ES"
+              description: "Spanish (Spain)"
       responses:
         '200':
           description: Successful operation
@@ -70,16 +95,23 @@ paths:
       tags:
         - Trending
       summary: Get trending content
-      description: Retrieves a paginated list of trending content (movies, TV shows, people) for the specified time window
+      description: |
+        Retrieves a paginated list of trending content (movies, TV shows, people) for the specified time window.
+        Content is ranked by popularity and engagement metrics from TMDB.
+        
+        **Time Windows:**
+        - `day`: Content trending in the last 24 hours
+        - `week`: Content trending in the last 7 days
       operationId: getTrendingContent
       parameters:
         - name: time_window
           in: query
-          description: Time window for trending content (e.g., day, week)
+          description: Time window for trending content
           required: true
           schema:
             type: string
             enum: [day, week]
+          example: "week"
         - name: page
           in: query
           description: Page number for paginated results
@@ -162,15 +194,59 @@ paths:
       tags:
         - Movies
       summary: Discover movies
-      description: Discover movies based on various filters and criteria
+      description: |
+        Discover movies based on various filters and criteria. This endpoint allows you to find movies
+        by release year, genre, language, region, and other parameters. Results are sorted and paginated.
+        
+        **Popular Use Cases:**
+        - Find movies by genre (action, comedy, drama, etc.)
+        - Filter by release year or date range
+        - Discover movies by region or original language
+        - Sort by popularity, rating, or release date
       operationId: discoverMovies
       parameters:
-        - name: discoverMovieRequest
+        - name: primaryReleaseYear
           in: query
-          description: Discovery request parameters
-          required: true
+          description: Filter movies by their primary release year
+          required: false
           schema:
-            $ref: '#/components/schemas/DiscoverMovieRequest'
+            type: integer
+            minimum: 1900
+            maximum: 2030
+          example: 2023
+        - name: withGenres
+          in: query
+          description: Comma-separated list of genre IDs to include
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9]+(,[0-9]+)*$'
+          example: "28,12,16"
+        - name: region
+          in: query
+          description: Filter movies by region code (ISO 3166-1 alpha-2)
+          required: false
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+          example: "US"
+        - name: withOriginalLanguage
+          in: query
+          description: Filter movies by their original language (ISO 639-1)
+          required: false
+          schema:
+            type: string
+            pattern: '^[a-z]{2}$'
+          example: "en"
+        - name: sortBy
+          in: query
+          description: Field to sort the results by
+          required: false
+          schema:
+            type: string
+            enum: [popularity.desc, popularity.asc, release_date.desc, release_date.asc, vote_average.desc, vote_average.asc]
+            default: popularity.desc
+          example: "popularity.desc"
         - name: page
           in: query
           description: Page number for paginated results
@@ -367,10 +443,10 @@ paths:
           '500':
             description: Internal server error
 
-  /genres/movie:
+  /configuration/genres/movie:
     get:
       tags:
-        - Genres
+        - Configuration
       summary: Get movie genres
       description: Retrieves a list of all available movie genres
       operationId: getMovieGenres
@@ -399,10 +475,10 @@ paths:
         '500':
           description: Internal server error
 
-  /genres/tv-show:
+  /configuration/genres/tv-show:
       get:
         tags:
-          - Genres
+          - Configuration
         summary: Get TV show genres
         description: Retrieves a list of all available TV show genres
         operationId: getTVShowGenres
@@ -570,28 +646,41 @@ components:
 
     BaseMovieDTO:
       type: object
+      description: Basic movie information DTO
       properties:
         id:
           type: integer
           description: Unique identifier of the movie
+          example: 24428
         posterPath:
           type: string
-          description: Path to the movie's poster image
+          description: Path to the movie's poster image (relative to TMDB image base URL)
+          nullable: true
         name:
           type: string
           description: Name/title of the movie
+          example: "The Avengers"
         genres:
           type: array
           description: List of genres associated with the movie
           items:
             $ref: '#/components/schemas/GenreDTO'
+          example:
+            - id: 28
+              name: "Action"
+            - id: 12
+              name: "Adventure"
         releaseDate:
           type: string
           format: date-time
           description: Release date of the movie
+          nullable: true
+          example: "2012-04-25T00:00:00Z"
         overview:
           type: string
           description: Overview or summary of the movie plot
+          nullable: true
+          example: "When an unexpected enemy emerges and threatens global safety and security, Nick Fury, director of the international peacekeeping agency known as S.H.I.E.L.D., finds himself in need of a team to pull the world back from the brink of disaster."
           
     MovieDTO:
       allOf:
@@ -668,13 +757,16 @@ components:
 
     GenreDTO:
       type: object
+      description: Genre information DTO
       properties:
         id:
           type: integer
           description: Unique identifier of the genre
+          example: 28
         name:
           type: string
           description: Name of the genre
+          example: "Action"
     
     TrendingDTO:
       type: object
@@ -948,6 +1040,8 @@ components:
         iosCode:
           type: string
           description: ISO 3166-1 alpha-2 country code
+          pattern: '^[A-Z]{2}$'
+          example: "US"
         name:
           type: string
           description: Localized country name
